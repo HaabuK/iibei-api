@@ -1,0 +1,45 @@
+openapi: 3.0.2
+info:
+  title: iibei-API
+  version: 1.0.0
+  get:
+    tags:
+        - details
+    responses:
+        '200':
+            content:
+                application/json:
+                    schema:
+                        type: array
+                        items:
+                            type: string
+                    examples:
+                        Full details of a given job:
+                            value: |-
+                                [
+                                    {id: 1,name: "Koristaja", quote: 6},
+                                    {id: 2,name: "Kokk", quote: 10.00},
+                                    {id: 3,name: "Autojuht", quote: 9.00},
+                                    {id: 4,name: "Maaler", quote: 13.50},
+                                    {id: 5,name: "Torumees", quote: 15.25},
+                                    {id: 6,name: "Lapsehoidja", quote: 8.99},
+                                    {id: 7,name: "Ehitaja", quote: 10.99},
+                                    {id: 8,name: "Raamatupidaja", quote: 18.00},
+                                    {id: 9,name: "Treener", quote: 10.50}
+                                ]
+            description: Returns full details of a given id job
+        '404':
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/error'
+                    examples:
+                        Job /w+ was not found:
+                            value: |-
+                                {
+                                    "Job ||w+ was not found in job array."
+                                }
+            description: Job was not found in jobs array
+    operationId: id
+    summary: Get full details of a job
+    description: Returns full details of a given id job
