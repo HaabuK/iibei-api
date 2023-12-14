@@ -7,14 +7,34 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 </head>
 <body>
-  <table id="jobsTable" class="table table-striped table-bordered"><tr>
-    <th>Name</th>
-    <th>Quote</th>
-  </tr><tr>
-    <th>Kokk</th>
-    <th>11.50</th>
-  </tr></table>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous">
+  <div id="app">
+    <table id="jobsTable" class="table table-striped table-bordered">
+      <tr>
+        <th>Name</th>
+        <th>Quote</th>
+      </tr>
+      <tr v-for="job in jobs">
+        <td>{{ job.name }}</td>
+        <td>{{ job.quote }}</td>
+      </tr>
+    </table>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/vue@3.3.11/dist/vue.global.js"></script>
+  <script>
+    const vue = Vue.createApp({
+      data() {
+        return {
+          jobs: []
+        }
+      },
+      async created() {
+        this.jobs = await (await fetch('http://localhost:7070/jobs')).json();
+      }
+    }).mount('#app')
   </script>
 </body>
 </html>
+
+<!-- https://vuejs.org/guide/introduction.html -->
+<!-- https://moodle.edu.ee/mod/book/view.php?id=2256229&chapterid=167077 -->

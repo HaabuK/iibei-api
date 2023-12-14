@@ -1,11 +1,13 @@
 //const app = require('express')()
 const express = require('express')
+const cors = require('cors')
 const app = express()
 const port = 7070
 const swaggerUi = require('swagger-ui-express')
 const swaggerDocument = require('./docs/swagger.json')
 const yamljs = require('yamljs')
 
+app.use(cors())
 app.use(express.json())
 
 const jobs = [{id: 1,name: "Koristaja", quote: 6},
