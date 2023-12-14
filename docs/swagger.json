@@ -9,7 +9,7 @@
       "/jobs": {
         "get": {
             "tags": [
-                "details"
+                "Jobs"
             ],
             "responses": {
                 "200": {
@@ -22,33 +22,65 @@
                                 }
                             },
                             "examples": {
-                                "Full details of a given job": {
-                                    "value": "[\n    {id: 1,name: \"Koristaja\", quote: 6},\n    {id: 2,name: \"Kokk\", quote: 10.00},\n    {id: 3,name: \"Autojuht\", quote: 9.00},\n    {id: 4,name: \"Maaler\", quote: 13.50},\n    {id: 5,name: \"Torumees\", quote: 15.25},\n    {id: 6,name: \"Lapsehoidja\", quote: 8.99},\n    {id: 7,name: \"Ehitaja\", quote: 10.99},\n    {id: 8,name: \"Raamatupidaja\", quote: 18.00},\n    {id: 9,name: \"Treener\", quote: 10.50}\n]"
+                                "List of jobs": {
+                                    "value": [
+                                        "Koristaja",
+                                        "Autojuht"
+                                    ]
                                 }
                             }
                         }
                     },
-                    "description": "Returns full details of a given id job"
+                    "description": "Returns a list of jobs"
+                }
+            },
+            "summary": "Get a list of all jobs",
+            "description": "Returns list of all jobs in API\n"
+        },
+        "post": {
+            "requestBody": {
+                "description": "A new job can be created",
+                "content": {
+                    "new-job": {
+                        "schema": {
+                            "$ref": "#/components/schemas/new-job"
+                        }
+                    }
                 },
-                "404": {
+                "required": true
+            },
+            "tags": [
+                "new-job"
+            ],
+            "responses": {
+                "201": {
                     "content": {
-                        "application/json": {
+                        "new-job": {
+                            "schema": {
+                                "$ref": "#/components/schemas/new-job"
+                            }
+                        }
+                    },
+                    "description": "A new job was added"
+                },
+                "400": {
+                    "content": {
+                        "error": {
                             "schema": {
                                 "$ref": "#/components/schemas/error"
                             },
                             "examples": {
-                                "Job /w+ was not found": {
-                                    "value": "{\n    \"Job ||w+ was not found in job array.\"\n}"
+                                "no params": {
+                                    "value": "{\n    \"name\": \"\"\n    \"quote\": \"\"\n}"
                                 }
                             }
                         }
                     },
-                    "description": "Job was not found in jobs array"
+                    "description": "One or all parameters are missing"
                 }
             },
-            "operationId": "id",
-            "summary": "Get full details of a job",
-            "description": "Returns full details of a given id job"
+            "summary": "Creates a job",
+            "description": "creates a new job entry"
         }
     }
   }
