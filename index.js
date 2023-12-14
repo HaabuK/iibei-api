@@ -45,6 +45,15 @@ app.post('/jobs', (req, res) => {
   .send(job)
 })
 
+
+app.delete('/jobs/:id', (req, res) => {
+  if (typeof jobs[req.params.id - 1] === 'undefined') {
+      return res.status(404).send({error: "job not found"})
+  }
+  jobs.splice(req.params.id - 1, 1)
+  res.status(204).send({error: "No content"})
+})
+
 //xh -v http://localhost:7070/jobs name=Kuller quote=8.60
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))

@@ -9,7 +9,7 @@
       "/jobs": {
         "get": {
             "tags": [
-                "Jobs"
+                "details"
             ],
             "responses": {
                 "200": {
@@ -22,66 +22,74 @@
                                 }
                             },
                             "examples": {
-                                "List of jobs": {
-                                    "value": [
-                                        "Koristaja",
-                                        "Autojuht"
-                                    ]
+                                "Full details of a given job": {
+                                    "value": "[\n    {id: 1,name: \"Koristaja\", quote: 6},\n    {id: 2,name: \"Kokk\", quote: 10.00},\n    {id: 3,name: \"Autojuht\", quote: 9.00},\n    {id: 4,name: \"Maaler\", quote: 13.50},\n    {id: 5,name: \"Torumees\", quote: 15.25},\n    {id: 6,name: \"Lapsehoidja\", quote: 8.99},\n    {id: 7,name: \"Ehitaja\", quote: 10.99},\n    {id: 8,name: \"Raamatupidaja\", quote: 18.00},\n    {id: 9,name: \"Treener\", quote: 10.50}\n]"
                                 }
                             }
                         }
                     },
-                    "description": "Returns a list of jobs"
-                }
-            },
-            "summary": "Get a list of all jobs",
-            "description": "Returns list of all jobs in API\n"
-        },
-        "post": {
-            "requestBody": {
-                "description": "A new job can be created",
-                "content": {
-                    "new-job": {
-                        "schema": {
-                            "$ref": "#/components/schemas/new-job"
-                        }
-                    }
+                    "description": "Returns full details of a given id job"
                 },
-                "required": true
-            },
-            "tags": [
-                "new-job"
-            ],
-            "responses": {
-                "201": {
+                "404": {
                     "content": {
-                        "new-job": {
-                            "schema": {
-                                "$ref": "#/components/schemas/new-job"
-                            }
-                        }
-                    },
-                    "description": "A new job was added"
-                },
-                "400": {
-                    "content": {
-                        "error": {
+                        "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/error"
                             },
                             "examples": {
-                                "no params": {
-                                    "value": "{\n    \"name\": \"\"\n    \"quote\": \"\"\n}"
+                                "Job /w+ was not found": {
+                                    "value": "{\n    \"Job ||w+ was not found in job array.\"\n}"
                                 }
                             }
                         }
                     },
-                    "description": "One or all parameters are missing"
+                    "description": "Job was not found in jobs array"
                 }
             },
-            "summary": "Creates a job",
-            "description": "creates a new job entry"
-        }
+            "operationId": "id",
+            "summary": "Get full details of a job",
+            "description": "Returns full details of a given id job"
+        },
+        "delete": {
+            "requestBody": {
+                "content": {
+                    "delete-job": {
+                        "schema": {
+                            "$ref": "#/components/schemas/delete-job"
+                        }
+                    }
+                },
+                "required": false
+            },
+            "tags": [
+                "delete"
+            ],
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true
+                }
+            ],
+            "responses": {
+                "204": {
+                    "description": "Successfully deleted"
+                },
+                "404": {
+                    "description": "Listing not found"
+                }
+            },
+            "operationId": "delete",
+            "summary": "Delete a job",
+            "description": "Delete a job from list"
+        },
+        "parameters": [
+            {
+                "name": "id",
+                "in": "path",
+                "required": true
+            }
+        ]
     }
   }
 }
