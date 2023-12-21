@@ -1,8 +1,10 @@
 //const app = require('express')()
+//require("dotenv").config()
 const express = require('express')
 const cors = require('cors')
 const app = express()
 const port = 7070
+//const port = process.env.APP_PORT
 const swaggerUi = require('swagger-ui-express')
 const swaggerDocument = require('./docs/swagger.json')
 const yamljs = require('yamljs')
@@ -19,6 +21,14 @@ const jobs = [{id: 1,name: "Koristaja", quote: 6},
 {id: 7,name: "Ehitaja", quote: 10.99},
 {id: 8,name: "Raamatupidaja", quote: 18.00},
 {id: 9,name: "Treener", quote: 10.50}]
+
+app.use(express.json());
+
+require("./routes/app_routes")(app)
+
+app.get("/errors", async (req,res) => {
+  res.statusCode(404).send({"error": "something went wrong"})
+})
 
 app.get('/jobs', (req, res) => {
   res. send(jobs)

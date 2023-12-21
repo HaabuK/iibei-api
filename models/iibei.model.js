@@ -1,7 +1,7 @@
 const { sequelize, Sequelize } = require("../db");
 
 module.exports = (sequelize, Sequelize) => {
-  const Iibei = sequelize.define("iibei", {
+  const Job = sequelize.define("job", {
     id:{
       type: Sequelize.INTEGER,
       primayKey: true,
@@ -17,5 +17,5 @@ module.exports = (sequelize, Sequelize) => {
     }
   });
 
-  return Iibei;
+  return Job;
 }
