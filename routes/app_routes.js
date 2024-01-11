@@ -1,4 +1,5 @@
 const jobsController = require("../controllers/jobsController");
+const professionsController = require("../controllers/professionsController");
 
 module.exports = (app) => {
     app.route("/jobs")
@@ -9,4 +10,7 @@ module.exports = (app) => {
         .get(jobsController.getById)
         .put(jobsController.updateById)
         .delete(jobsController.deleteById)
+
+    app.route("/professions")
+        .get(professionsController.getAll)
 }
