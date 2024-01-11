@@ -15,7 +15,7 @@ const sequelize = new Sequelize(
 const db = {}
 db.Sequelize = Sequelize
 db.sequelize = sequelize
-db.iibei = require("./models/Iibei.model")(sequelize, Sequelize)
+db.jobs = require("./models/iibei.model")(sequelize, Sequelize)
 
 async function Sync() {
   await sequelize.sync({alter:true})
