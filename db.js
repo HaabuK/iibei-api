@@ -16,7 +16,6 @@ const db = {}
 db.Sequelize = Sequelize
 db.sequelize = sequelize
 db.jobs = require("./models/Job.model")(sequelize,Sequelize)
-//db.letsPlays = require("./models/LetsPlay.model")(sequelize,Sequelize)
 
 async function Sync() {
     await sequelize.sync({alter:true}) 

@@ -31,7 +31,7 @@ app.get("/errors", async (req,res) => {
 })
 
 app.get('/jobs', (req, res) => {
-  res. send(jobs)
+  res.send(jobs)
 })
 
 app.get('/jobs/:id', (req, res) => {
