@@ -1,5 +1,3 @@
-const { sequelize, Sequelize } = require("../db");
-
 module.exports = (sequelize, Sequelize) => {
   const Job = sequelize.define("jobs", {
     id:{
