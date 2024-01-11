@@ -13,4 +13,7 @@ module.exports = (app) => {
 
     app.route("/professions")
         .get(professionsController.getAll)
+        
+    app.route("/professions/:id")
+        .get(professionsController.getById)
 }

@@ -6,6 +6,10 @@ exports.getAll = async (req,res) => {
     res.send(professions)
 }
 
+exports.getById = async (req, res) => {
+    const professions = await Profession.findByPk(req.params.id)
+    res.send(professions)
+}
 
 getBaseUrl = (request) => {
     return (
