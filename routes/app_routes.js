@@ -18,4 +18,5 @@ module.exports = (app) => {
     app.route("/professions/:id")
         .get(professionsController.getById)
         .put(professionsController.updateById)
+        .delete(professionsController.deleteById)
 }
