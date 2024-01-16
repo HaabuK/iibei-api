@@ -11,6 +11,27 @@ exports.getById = async (req, res) => {
     res.send(clients)
 }
 
+exports.createNew = async (req, res) => {
+    let client
+    try {
+        client = await Client.create(req.body)
+    } catch (error) {
+        if (error instanceof db.Sequelize.ValidationError) {
+            console.log(error)
+            res.status(400).send({"error":error.errors.map((item)=> item.message)})
+        } else {
+            console.log("WorkersCreate: ", error)
+            res.status(500).send({"error":"Something has gone wrong"})
+        }
+        return
+    }
+    res
+    .status(201)
+    .location(`${getBaseUrl(req)}/clients/${client.id}`)
+    .json(client);
+    console.log(client)
+}
+
 getBaseUrl = (request) => {
     return (
         (request.connection && request.connection.encryption ? "https" : "http") +
