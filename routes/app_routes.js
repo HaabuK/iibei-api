@@ -24,7 +24,9 @@ module.exports = (app) => {
     app.route("/workers")
         .get(workersController.getAll)
         .post(workersController.createNew)
+        
 
     app.route("/workers/:id")
         .get(workersController.getById)
+        .put(workersController.updateById)
 }

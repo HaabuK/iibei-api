@@ -32,6 +32,26 @@ exports.createNew = async (req, res) => {
     console.log(worker)
 }
 
+exports.updateById = async (req, res) => {
+    let result
+    delete req.body.id
+    try {
+        result = await Worker.update(req.body,{where: {id: req.params.id}})
+    } catch (error) {
+        console.log("WorkersUpdate: ", error)
+        res.status(500).send({error:"Something has gone wrong"})
+        return
+    }
+    if (result === 0) {
+        res.status(404).send({error:"Worker not found"})
+        return
+    }
+    const worker = await Worker.findByPk(req.params.id)
+    res.status(200)
+    .location(`${getBaseUrl(req)}/workers/${worker.id}`)
+    .json(worker)
+}
+
 getBaseUrl = (request) => {
     return (
         (request.connection && request.connection.encryption ? "https" : "http") +
