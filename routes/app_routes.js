@@ -38,5 +38,6 @@ module.exports = (app) => {
 
     app.route("/clients/:id")
         .get(clientsController.getById)
+        .put(clientsController.updateById)
         
 }
