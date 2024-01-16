@@ -6,6 +6,11 @@ exports.getAll = async (req,res) => {
     res.send(clients)
 }
 
+exports.getById = async (req, res) => {
+    const clients = await Client.findByPk(req.params.id)
+    res.send(clients)
+}
+
 getBaseUrl = (request) => {
     return (
         (request.connection && request.connection.encryption ? "https" : "http") +

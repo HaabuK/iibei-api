@@ -32,7 +32,10 @@ module.exports = (app) => {
         .put(workersController.updateById)
         .delete(workersController.deleteById)
 
-        app.route("/clients")
+    app.route("/clients")
         .get(clientsController.getAll)
+
+    app.route("/clients/:id")
+        .get(clientsController.getById)
         
 }
