@@ -32,6 +32,23 @@ exports.createNew = async (req, res) => {
     console.log(worker)
 }
 
+exports.deleteById = async (req, res) => {
+    let result
+    try {
+        result = await Worker.destroy({where: {id: req.params.id}})
+    } catch (error) {
+        console.log("WorkersDelete: ", error)
+        res.status(500).send({error:"Something has gone wrong"})
+        return
+    }
+    if (result === 0) {
+        res.status(404).send({error:"Worker not found"})
+        return
+    }
+    res
+    .status(204).send()
+}
+
 exports.updateById = async (req, res) => {
     let result
     delete req.body.id
