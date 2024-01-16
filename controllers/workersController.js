@@ -6,6 +6,11 @@ exports.getAll = async (req,res) => {
     res.send(workers)
 }
 
+exports.getById = async (req, res) => {
+    const workers = await Worker.findByPk(req.params.id)
+    res.send(workers)
+}
+
 getBaseUrl = (request) => {
     return (
         (request.connection && request.connection.encryption ? "https" : "http") +
