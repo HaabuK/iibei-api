@@ -112,6 +112,47 @@ app.delete('/clients/:id', (req, res) => {
   res.status(204).send({error: "No content"})
 })
 
+
+//WORKERS
+
+app.get('/workers', (req, res) => {
+  res.send(workers)
+})
+
+
+app.get('/workers/:id', (req, res) => {
+  if (typeof workers[req.params.id -1] === 'undefined'){
+    return res.status(404).send({error: "Worker not found"})
+  }
+    res.send(workers[req.params.id - 1])
+})
+
+app.post('/workers', (req, res) => {
+  if (!req.body.name || !req.body.quote) {
+
+    return res.status(400).send({ error: 'One or all params are missing' })
+  }
+  let worker = {
+    id: workers.length + 1, 
+    quote: req.body.quote,
+    name: req.body.name
+  }
+
+  workers.push(worker)
+  res.status(201)
+  .location(`${getBaseUrl(req)}/workers/${worker.length}`)
+  .send(worker)
+})
+
+
+app.delete('/workers/:id', (req, res) => {
+  if (typeof workers[req.params.id - 1] === 'undefined') {
+      return res.status(404).send({error: "worker not found"})
+  }
+  workers.splice(req.params.id - 1, 1)
+  res.status(204).send({error: "No content"})
+})
+
 //xh -v http://localhost:7070/professions name=Kuller quote=8.60
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))

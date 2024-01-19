@@ -33,6 +33,27 @@ const vue = Vue.createApp({
       },
       clientToDelete: null,
 
+      // Workers
+      workerInModal: { name: null },
+      workers: [],
+      newWorker: {
+        name: '',
+        salary: '',
+        email: '',
+        phone: '',
+        company: '',
+        driverslicense: '',
+      },
+      updatedWorker: {
+        name: '',
+        salary: '',
+        email: '',
+        phone: '',
+        company: '',
+        driverslicense: '',
+      },
+      workerToDelete: null,
+
     };
   },
   async created() {
@@ -50,6 +71,13 @@ const vue = Vue.createApp({
         console.log('Clients:', this.clients);
       } catch (error) {
         console.error('Error getting clients:', error); 
+      }
+    } else if (window.location.pathname.endsWith('workers.html')) {
+      try {
+        this.workers = await (await fetch('http://localhost:7070/workers')).json();
+        console.log('Workers:', this.workers);
+      } catch (error) {
+        console.error('Error getting workers:', error); 
       }
     }
   },
@@ -128,9 +156,9 @@ const vue = Vue.createApp({
         field: '',
       };
 
-      // Open the createProfessionModal
-      let createProfessionModal = new bootstrap.Modal(document.getElementById('updateProfessionModal'), {});
-      createProfessionModal.show();
+      // Open the updateProfessionModal
+      let updateProfessionModal = new bootstrap.Modal(document.getElementById('updateProfessionModal'), {});
+      updateProfessionModal.show();
     },
 
     updateProfession() {
@@ -351,16 +379,27 @@ const vue = Vue.createApp({
         company: '',
       };
 
-      // Open the createClientModal
-      let createClientModal = new bootstrap.Modal(document.getElementById('updateClientModal'), {});
-      createClientModal.show();
+      // Open the updateClientModal
+      let updateClientModal = new bootstrap.Modal(document.getElementById('updateClientModal'), {});
+      updateClientModal.show();
     },
 
     updateClient() {
-      // Filter out the empty fields
-      const nonEmptyFields = Object.entries(this.updatedClient)
-        .filter(([key, value]) => value && value.trim() !== '')
-        .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+      // Create an object with non-empty fields
+      const nonEmptyFields = {
+        name: this.updatedClient.name.trim(),
+        location: this.updatedClient.location.trim(),
+        email: this.updatedClient.email.trim(),
+        phone: this.updatedClient.phone.trim(),
+        company: this.updatedClient.company.trim(),
+      };
+    
+      // Remove fields with empty values
+      Object.keys(nonEmptyFields).forEach(key => {
+        if (!nonEmptyFields[key]) {
+          delete nonEmptyFields[key];
+        }
+      });
     
       // Check if there are any non-empty fields
       if (Object.keys(nonEmptyFields).length === 0) {
@@ -412,6 +451,8 @@ const vue = Vue.createApp({
     
     
     
+    
+    
     prepareDeleteClient(clientInModal) {
       // Set the client to be deleted
       this.clientToDelete = clientInModal;
@@ -444,6 +485,205 @@ const vue = Vue.createApp({
         })
         .catch(error => {
           console.error('Error deleting client:', error);
+          // Handle the error appropriately (e.g., show an error message)
+        });
+      }
+    },
+
+
+
+    //WORKERS
+    getWorker: async function (id) {
+      this.workerInModal = await (await fetch(`http://localhost:7070/workers/${id}`)).json();
+      let workerInfoInModal = new bootstrap.Modal(document.getElementById('workerInfoInModal'), {});
+      workerInfoInModal.show();
+    },
+    
+    createWorkerModal() {
+      // Clear the form data
+      this.newWorker = {
+        name: '',
+        salary: '',
+        email: '',
+        phone: '',
+        company: '',
+        driverslicense: '',
+      };
+    
+      // Open the createWorkerModal
+      let createWorkerModal = new bootstrap.Modal(document.getElementById('createWorkerModal'), {});
+      createWorkerModal.show();
+    },
+    
+    createNewWorker() {
+      // Check if the name is empty
+      if (!this.newWorker.name.trim()) {
+        // Handle the case where the name is empty (you can show an error message)
+        console.error('Error: Name cannot be empty');
+        // Close the modal
+        $('#createWorkerModal').modal('hide');
+        return;
+      }
+    
+      // Implement the logic for creating a new worker here
+      console.log('Creating new worker:', this.newWorker);
+    
+      // Make a POST request to create a new worker
+      fetch('http://localhost:7070/workers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: this.newWorker.name.trim(),
+          salary: this.newWorker.salary.trim(),
+          email: this.newWorker.email.trim(),
+          phone: this.newWorker.phone.trim(),
+          company: this.newWorker.company.trim(),
+          driverslicense: this.newWorker.driverslicense.trim(),
+        }),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(worker => {
+          // Handle the response from the server
+          console.log('New worker created:', worker);
+    
+          // Add the new worker to the workers array
+          this.workers.push(worker);
+    
+          // Close the modal after creating
+          $('#createWorkerModal').modal('hide');
+        })
+        .catch(error => {
+          console.error('Error creating new worker:', error);
+          // Handle the error appropriately (e.g., show an error message)
+        });
+    },    
+    
+    
+    openUpdateWorkerModal(worker) {
+      // Set the updatedWorker data based on the selected worker
+      this.updatedWorker = {
+        id: worker.id,
+        name: '',
+        salary: '',
+        email: '',
+        phone: '',
+        company: '',
+        driverslicense: '',
+      };
+    
+      // Open the createWorkerModal
+      let createWorkerModal = new bootstrap.Modal(document.getElementById('updateWorkerModal'), {});
+      createWorkerModal.show();
+    },
+    
+    updateWorker() {
+      // Create an object with non-empty fields
+      const nonEmptyFields = {
+        name: this.updatedWorker.name.trim(),
+        salary: this.updatedWorker.salary.trim(),
+        email: this.updatedWorker.email.trim(),
+        phone: this.updatedWorker.phone.trim(),
+        company: this.updatedWorker.company.trim(),
+        driverslicense: this.updatedWorker.driverslicense.trim(),
+      };
+    
+      // Remove fields with empty values
+      Object.keys(nonEmptyFields).forEach(key => {
+        if (!nonEmptyFields[key]) {
+          delete nonEmptyFields[key];
+        }
+      });
+    
+      // Check if there are any non-empty fields
+      if (Object.keys(nonEmptyFields).length === 0) {
+        // All fields are empty, just close the modal
+        console.log('No fields provided for update. Closing modal.');
+        // Close the modal
+        $('#updateWorkerModal').modal('hide');
+        return;
+      }
+    
+      // Make a PUT request to update the worker
+      fetch(`http://localhost:7070/workers/${this.updatedWorker.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(nonEmptyFields),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(updatedWorker => {
+          // Handle the response from the server
+          console.log('Worker updated:', updatedWorker);
+    
+          // Close the modal after updating
+          $('#updateWorkerModal').modal('hide');
+    
+          // Fetch the updated list of workers
+          return fetch('http://localhost:7070/workers');
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(workers => {
+          // Update the workers array with the updated list
+          this.workers = workers;
+        })
+        .catch(error => {
+          console.error('Error updating worker:', error);
+          // Handle the error appropriately (e.g., show an error message)
+        });
+    },
+    
+      
+    
+    prepareDeleteWorker(workerInModal) {
+      // Set the worker to be deleted
+      this.workerToDelete = workerInModal;
+    
+      // Show the delete confirmation modal
+      let deleteConfirmationModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'), {});
+      deleteConfirmationModal.show();
+    },
+    
+    deleteWorker() {
+      if (this.workerToDelete) {
+        // Implement the logic for deleting a worker here
+        console.log('Deleting worker with id:', this.workerToDelete.id);
+    
+        // Make a DELETE request to delete the worker
+        fetch(`http://localhost:7070/workers/${this.workerToDelete.id}`, {
+          method: 'DELETE',
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          // Remove the deleted worker from the workers array
+          this.workers = this.workers.filter(worker => worker.id !== this.workerToDelete.id);
+    
+          $('#deleteConfirmationModal').modal('hide');
+        })
+        .then(response =>{ 
+          $('#workerInfoInModal').modal('hide');
+        })
+        .catch(error => {
+          console.error('Error deleting worker:', error);
           // Handle the error appropriately (e.g., show an error message)
         });
       }
