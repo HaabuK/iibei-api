@@ -1,47 +1,75 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <!-- Head section with meta tags and styles -->
-</head>
-<body>
-  <div id="app">
-    <!-- Your view selector and dynamic component loading -->
-    <div class="container mt-3">
-      <label for="viewSelector" class="form-label">Select View:</label>
-      <select id="viewSelector" class="form-select" v-model="selectedView">
-        <option value="Professions">Professions</option>
-        <!-- Add more options as needed -->
-      </select>
-    </div>
-    <component :is="selectedView"></component>
-  </div>
 
-  <!-- Include necessary scripts -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Index Page</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body style="background-image: url(https://fastly.picsum.photos/id/1021/1920/1080.jpg?hmac=DS2TfmvLwtjDGFoSGOPJw6PprUlsIUz-0huiqVL3N_Y);">
+  <div id="app" class="taust">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex align-items-center">
+              <!-- <button type="button" class="btn btn-success" data-bs-toggle="modal" v-on:click="createProfessionModal">Create new</button> -->
+            </div>
+            <div class="text-center">
+              <h2 class="Title" style="font-family:'Courier New', Courier, monospace; font-size: 100px;">Iibei</h2>
+            </div>
+            <div></div>
+          </div>
+          <hr class="Title" style="margin-bottom: 20px;">
+        </div>
+      </div>
+    
+      <div class="row">
+        <div class="col-4">
+          <a href="professions.html" class="item" style="text-decoration: none;">
+            <div>
+              <div style="font-size: 30px;">Professions</div>
+            </div>
+          </a>
+        </div>
+        <div class="col-4">
+          <a href="professions.html" class="item" style="text-decoration: none;">
+            <div>
+              <div style="font-size: 30px;">Workers</div>
+            </div>
+          </a>
+        </div>
+        <div class="col-4">
+          <a href="professions.html" class="item" style="text-decoration: none;">
+            <div>
+              <div style="font-size: 30px;">Clients</div>
+            </div>
+          </a>
+        </div>
+        <hr class="Title" style="margin-top: 20px; margin-bottom: 50px">
+      </div>
+    </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
     crossorigin="anonymous"></script>
 
   <script src="https://unpkg.com/vue@3.3.11/dist/vue.global.js"></script>
-  <script src="rest-client.js"></script>
-
-  <!-- Import your Vue components -->
-  <script type="module" src="./views/professions-component.js"></script>
 
   <script>
     const app = Vue.createApp({
-      data() {
-        return {
-          selectedView: 'Professions',
-        };
-      },
+      methods: {
+        goToFileEndpoint(endpointNumber) {
+          // Handle the logic for file endpoints
+          console.log(`Navigating to File Endpoint ${endpointNumber}`);
+        }
+      }
     });
-
-    // Import and register the Professions component
-    import Professions from './views/professions-component.js';
-    app.component('Professions', Professions);
 
     app.mount('#app');
   </script>
-</body>
-</html>
+</body
