@@ -33,13 +33,11 @@ app.get("/errors", async (req,res) => {
   res.statusCode(404).send({"error": "something went wrong"})
 })
 
+//PROFESSIONS
+
 app.get('/professions', (req, res) => {
   res.send(professions)
 })
-
-// app.get('/workers', (req, res) => {
-//   res.send(workers)
-// })
 
 app.get('/professions/:id', (req, res) => {
   if (typeof professions[req.params.id -1] === 'undefined'){
@@ -71,6 +69,46 @@ app.delete('/professions/:id', (req, res) => {
       return res.status(404).send({error: "profession not found"})
   }
   professions.splice(req.params.id - 1, 1)
+  res.status(204).send({error: "No content"})
+})
+
+//CLIENTS
+
+app.get('/clients', (req, res) => {
+  res.send(clients)
+})
+
+
+app.get('/clients/:id', (req, res) => {
+  if (typeof clients[req.params.id -1] === 'undefined'){
+    return res.status(404).send({error: "Client not found"})
+  }
+    res.send(clients[req.params.id - 1])
+})
+
+app.post('/clients', (req, res) => {
+  if (!req.body.name || !req.body.quote) {
+
+    return res.status(400).send({ error: 'One or all params are missing' })
+  }
+  let client = {
+    id: clients.length + 1, 
+    quote: req.body.quote,
+    name: req.body.name
+  }
+
+  clients.push(client)
+  res.status(201)
+  .location(`${getBaseUrl(req)}/clients/${client.length}`)
+  .send(client)
+})
+
+
+app.delete('/clients/:id', (req, res) => {
+  if (typeof clients[req.params.id - 1] === 'undefined') {
+      return res.status(404).send({error: "client not found"})
+  }
+  clients.splice(req.params.id - 1, 1)
   res.status(204).send({error: "No content"})
 })
 

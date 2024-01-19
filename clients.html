@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clients</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+
+  <body style="background-image: url(https://fastly.picsum.photos/id/560/1920/1080.jpg?hmac=S4FL3BTWKXHUn-UVoCCf5mN2q33evqG8LpAFSlwB79M)">
+    <div id="app" class="taust">
+      <!-- Clients -->
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div class="d-flex align-items-center">
+                <a type="button" class="btn btn-success" href="index.html">Home</a>
+              </div>
+              <div class="text-center">
+                <h1 class="Title">Clients</h1>
+              </div>
+              <div class="d-flex align-items-center">
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" v-on:click="createClientModal">Create new</button>
+              </div>
+            </div>
+            <hr class="Title" style="margin-bottom: 20px;">
+          </div>
+        </div>
+      
+        <div class="row">
+          <div class="col-4" v-for="client in clients" :key="client.Id">
+            <button class="item" v-on:click="getClient(client.id)">
+              <div>
+                <div v-text="client.name" style="font-size: 30px;"></div>
+              </div>
+            </button>
+          </div>
+          <hr class="Title" style="margin-top: 20px; margin-bottom: 50px">
+        </div>
+      </div>
+      <!-- Client Detail popup -->
+      <div id="clientInfoInModal" class=" modal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content text-center">
+            <div class="modal-header text-center">
+              <div class="h3" v-text="`${clientInModal.name}`"></div>
+            </div>
+            <div class="modal-body">
+                  <div class="h4" v-text="`Name: ${clientInModal.name}`"></div>
+                  <div class="h4" v-text="`Location: ${clientInModal.location}`"></div>
+                  <div class="h4" v-text="`Email: ${clientInModal.email}`"></div>
+                  <div class="h4" v-text="`Phone: ${clientInModal.phone}`"></div>
+                  <div class="h4" v-text="`Company: ${clientInModal.company}`"></div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" v-on:click="prepareDeleteClient(clientInModal)">
+                Delete
+              </button>
+              <button type="button" class="btn btn-success" v-on:click="openUpdateClientModal(clientInModal)">
+                Update
+              </button>
+              <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="createClientModal" class="modal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content text-center">
+            <div class="modal-header text-center">
+              <div class="h3">Create New Client</div>
+            </div>
+      
+            <div class="modal-body">
+              <!-- Form for creating a new client -->
+              <form>
+                <div class="mb-3">
+                  <label for="newClientName" class="form-label">Name:</label>
+                  <input type="text" class="form-control" id="newClientName" v-model="newClient.name" required>
+                </div>
+                <div class="mb-3">
+                  <label for="newClientLocation" class="form-label">Location:</label>
+                  <input type="text" class="form-control" id="newClientLocation" v-model="newClient.location" required>
+                </div>
+                <div class="mb-3">
+                  <label for="newClientEmail" class="form-label">Email:</label>
+                  <input type="text" class="form-control" id="newClientEmail" v-model="newClient.email" required>
+                </div>
+                <div class="mb-3">
+                  <label for="newClientPhone" class="form-label">Phone:</label>
+                  <input type="text" class="form-control" id="newClientPhone" v-model="newClient.phone" required>
+                </div>
+                <div class="mb-3">
+                  <label for="newClientCompany" class="form-label">Company:</label>
+                  <input type="text" class="form-control" id="newClientCompany" v-model="newClient.company">
+                </div>
+              </form>
+            </div>
+      
+            <div class="modal-footer">
+              <button type="button" class="btn btn-success" v-on:click="createNewClient" data-bs-dismiss="modal">Create</button>
+              <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="updateClientModal" class="modal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content text-center">
+            <div class="modal-header text-center">
+              <div class="h3">Update Client</div>
+            </div>
+      
+            <div class="modal-body">
+              <!-- Form for updating a client -->
+              <form>
+                <div class="mb-3">
+                  <label for="updatedClientName" class="form-label">Name:</label>
+                  <input type="text" class="form-control" id="updatedClientName" v-model="updatedClient.name":placeholder="clientInModal.name" required>
+                </div>
+                <div class="mb-3">
+                  <label for="updatedClientLocation" class="form-label">Location:</label>
+                  <input type="text" class="form-control" id="updatedClientLocation" v-model="updatedClient.location" :placeholder="clientInModal.location">
+                </div>
+                <div class="mb-3">
+                  <label for="updatedClientEmail" class="form-label">Email:</label>
+                  <input type="text" class="form-control" id="updatedClientLocation" v-model="updatedClient.email" :placeholder="clientInModal.email">
+                </div>
+                <div class="mb-3">
+                  <label for="updatedClientPhone" class="form-label">Phone:</label>
+                  <input type="text" class="form-control" id="updatedClientLocation" v-model="updatedClient.phone" :placeholder="clientInModal.phone">
+                </div>
+                <div class="mb-3">
+                  <label for="updatedClientCompany" class="form-label">Company:</label>
+                  <input type="text" class="form-control" id="updatedClientLocation" v-model="updatedClient.company" :placeholder="clientInModal.company">
+                </div>
+              </form>
+            </div>
+      
+            <div class="modal-footer">
+              <button type="button" class="btn btn-success" v-on:click="updateClient" data-bs-dismiss="modal">Update</button>
+              <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="deleteConfirmationModal" class="modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content text-center">
+            <div class="modal-header text-center">
+              <div class="h3">Confirm Deletion</div>
+            </div>
+            <div class="modal-body">
+              <p v-if="clientToDelete">
+                Are you sure you want to delete {{ clientToDelete.name }}?
+              </p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-bs-dismiss="modal" 
+              data-bs-dismiss="clientInfoInModal" v-on:click="deleteClient">Delete</button>
+              <button type="button" class="btn btn-success" data-bs-dismiss="modal">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+      crossorigin="anonymous"></script>
+      
+    <script src="https://unpkg.com/vue@3.3.11/dist/vue.global.js"></script>
+
+    <script src="rest-client.js"></script>
+  </body>
+</html>

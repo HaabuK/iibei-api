@@ -1,6 +1,7 @@
 const vue = Vue.createApp({
   data() {
     return {
+      // PROFESSIONS
       professionInModal: { name: null },
       professions: [],
       newProfession: {
@@ -12,17 +13,48 @@ const vue = Vue.createApp({
         field: '',
       },
       professionToDelete: null,
+
+      // Clients
+      clientInModal: { name: null },
+      clients: [],
+      newClient: {
+        name: '',
+        location: '',
+        email: '',
+        phone: '',
+        company: '',
+      },
+      updatedClient: {
+        name: '',
+        location: '',
+        email: '',
+        phone: '',
+        company: '',
+      },
+      clientToDelete: null,
+
     };
   },
   async created() {
-    try {
-      this.professions = await (await fetch('http://localhost:7070/professions')).json();
-      console.log('Professions:', this.professions);
-    } catch (error) {
-      console.error('Error getting professions:', error); 
+    // Check if the current page is 'professions.html' or 'clients.html'
+    if (window.location.pathname.endsWith('professions.html')) {
+      try {
+        this.professions = await (await fetch('http://localhost:7070/professions')).json();
+        console.log('Professions:', this.professions);
+      } catch (error) {
+        console.error('Error getting professions:', error); 
+      }
+    } else if (window.location.pathname.endsWith('clients.html')) {
+      try {
+        this.clients = await (await fetch('http://localhost:7070/clients')).json();
+        console.log('Clients:', this.clients);
+      } catch (error) {
+        console.error('Error getting clients:', error); 
+      }
     }
   },
   methods: {
+    //PROFESSIONS
     getProfession: async function (id) {
       this.professionInModal = await (await fetch(`http://localhost:7070/professions/${id}`)).json();
       let professionInfoInModal = new bootstrap.Modal(document.getElementById('professionInfoInModal'), {});
@@ -233,11 +265,188 @@ const vue = Vue.createApp({
       }
     },
 
-    closeModals() {
-      $('#professionInfoInModal').modal('hide');
-      $('#deleteConfirmationModal').modal('hide');
-      // Add more modals as needed
-    }
 
+
+    //CLIENTS
+    getClient: async function (id) {
+      this.clientInModal = await (await fetch(`http://localhost:7070/clients/${id}`)).json();
+      let clientInfoInModal = new bootstrap.Modal(document.getElementById('clientInfoInModal'), {});
+      clientInfoInModal.show();
+    },
+    
+    createClientModal() {
+      // Clear the form data
+      this.newClient = {
+        name: '',
+        location: '',
+        email: '',
+        phone: '',
+        company: '',
+      };
+
+      // Open the createClientModal
+      let createClientModal = new bootstrap.Modal(document.getElementById('createClientModal'), {});
+      createClientModal.show();
+    },
+
+    createNewClient() {
+      // Check if at least the name is provided
+      if (!this.newClient.name.trim()) {
+        // Handle the case where the name is empty (you can show an error message)
+        console.error('Error: Name cannot be empty');
+        // Close the modal
+        $('#createClientModal').modal('hide');
+        return;
+      }
+    
+      // Implement the logic for creating a new client here
+      console.log('Creating new client:', this.newClient);
+    
+      // Make a POST request to create a new client
+      fetch('http://localhost:7070/clients', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: this.newClient.name.trim(),
+          location: this.newClient.location.trim(),
+          email: this.newClient.email.trim(),
+          phone: this.newClient.phone.trim(),
+          company: this.newClient.company.trim(),
+        }),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(client => {
+          // Handle the response from the server
+          console.log('New client created:', client);
+    
+          // Add the new client to the clients array
+          this.clients.push(client);
+    
+          // Close the modal after creating
+          $('#createClientModal').modal('hide');
+        })
+        .catch(error => {
+          console.error('Error creating new client:', error);
+          // Handle the error appropriately (e.g., show an error message)
+        });
+    },
+    
+    
+
+    openUpdateClientModal(client) {
+      // Set the updatedClient data based on the selected client
+      this.updatedClient = {
+        id: client.id,
+        name: '',
+        location: '',
+        email: '',
+        phone: '',
+        company: '',
+      };
+
+      // Open the createClientModal
+      let createClientModal = new bootstrap.Modal(document.getElementById('updateClientModal'), {});
+      createClientModal.show();
+    },
+
+    updateClient() {
+      // Filter out the empty fields
+      const nonEmptyFields = Object.entries(this.updatedClient)
+        .filter(([key, value]) => value && value.trim() !== '')
+        .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+    
+      // Check if there are any non-empty fields
+      if (Object.keys(nonEmptyFields).length === 0) {
+        console.error('Error: At least one field (name, location, email, phone, company) must be provided');
+        // Close the modal
+        $('#updateClientModal').modal('hide');
+        return;
+      }
+    
+      // Make a PUT request to update the client
+      fetch(`http://localhost:7070/clients/${this.updatedClient.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(nonEmptyFields),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(updatedClient => {
+          // Handle the response from the server
+          console.log('Client updated:', updatedClient);
+    
+          // Close the modal after updating
+          $('#updateClientModal').modal('hide');
+    
+          // Fetch the updated list of clients
+          return fetch('http://localhost:7070/clients');
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(clients => {
+          // Update the clients array with the updated list
+          this.clients = clients;
+        })
+        .catch(error => {
+          console.error('Error updating client:', error);
+          // Handle the error appropriately (e.g., show an error message)
+        });
+    },
+    
+    
+    
+    prepareDeleteClient(clientInModal) {
+      // Set the client to be deleted
+      this.clientToDelete = clientInModal;
+  
+      // Show the delete confirmation modal
+      let deleteConfirmationModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'), {});
+      deleteConfirmationModal.show();
+    },
+
+    deleteClient() {
+      if (this.clientToDelete) {
+        // Implement the logic for deleting a client here
+        console.log('Deleting client with id:', this.clientToDelete.id);
+  
+        // Make a DELETE request to delete the client
+        fetch(`http://localhost:7070/clients/${this.clientToDelete.id}`, {
+          method: 'DELETE',
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          // Remove the deleted client from the clients array
+          this.clients = this.clients.filter(client => client.id !== this.clientToDelete.id);
+  
+          $('#deleteConfirmationModal').modal('hide');
+        })
+        .then(response =>{ 
+          $('#clientInfoInModal').modal('hide');
+        })
+        .catch(error => {
+          console.error('Error deleting client:', error);
+          // Handle the error appropriately (e.g., show an error message)
+        });
+      }
+    },
   },
 }).mount('#app');
