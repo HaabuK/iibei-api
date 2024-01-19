@@ -48,14 +48,15 @@
             <div class="modal-header text-center">
               <div class="h3" v-text="`${workerInModal.name}`"></div>
             </div>
-            <div class="modal-body">
-                  <div class="h4" v-text="`Name: ${workerInModal.name}`"></div>
-                  <div class="h4" v-text="`Salary: ${workerInModal.salary}`"></div>
-                  <div class="h4" v-text="`Email: ${workerInModal.email}`"></div>
-                  <div class="h4" v-text="`Phone: ${workerInModal.phone}`"></div>
-                  <div class="h4" v-text="`Company: ${workerInModal.company}`"></div>
-                  <div class="h4" v-text="`Drivers License: ${workerInModal.driverslicense}`"></div>
-            </div>
+              <div class="modal-body">
+                <div class="h4" v-text="`Name: ${workerInModal.name}`"></div>
+                <div class="h4" v-if="workerProfession" v-text="`Profession: ${workerProfession.name}`"></div>
+                <div class="h4" v-text="`Salary: ${workerInModal.salary}`"></div>
+                <div class="h4" v-text="`Email: ${workerInModal.email}`"></div>
+                <div class="h4" v-text="`Phone: ${workerInModal.phone}`"></div>
+                <div class="h4" v-text="`Company: ${workerInModal.company}`"></div>
+                <div class="h4" v-text="`Drivers License: ${workerInModal.driverslicense}`"></div>
+              </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-danger" v-on:click="prepareDeleteWorker(workerInModal)">
                 Delete
@@ -82,6 +83,13 @@
                 <div class="mb-3">
                   <label for="newWorkerName" class="form-label">Name:</label>
                   <input type="text" class="form-control" id="newWorkerName" v-model="newWorker.name" required>
+                </div>
+                <div class="mb-3">
+                  <label for="newWorkerProfession" class="form-label">Profession:</label>
+                  <select class="form-select" id="newWorkerProfession" v-model="newWorker.profession">
+                    <option value="" disabled>Select a profession</option>
+                    <option v-for="profession in professions" :key="profession.id" :value="profession.id">{{ profession.name }}</option>
+                  </select>
                 </div>
                 <div class="mb-3">
                   <label for="newWorkerSalary" class="form-label">Salary:</label>

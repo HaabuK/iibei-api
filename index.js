@@ -9,6 +9,7 @@ const swaggerUi = require('swagger-ui-express')
 const swaggerDocument = require('./docs/swagger.json')
 const yamljs = require('yamljs')
 const bodyParser = require('body-parser');
+const WorkersInProfession = require('./models/WorkersInProfession.model');
 
 app.use(bodyParser.json());
 
@@ -114,6 +115,31 @@ app.delete('/clients/:id', (req, res) => {
 
 
 //WORKERS
+
+app.post('/workers/:workerId/associateProfession/:professionId', async (req, res) => {
+  const workerId = req.params.workerId;
+  const professionId = req.params.professionId;
+
+  try {
+    // Check if the association already exists
+    const existingAssociation = await WorkersInProfession.findOne({
+      where: { workerId, professionId },
+    });
+
+    if (existingAssociation) {
+      return res.status(400).json({ error: 'Association already exists' });
+    }
+
+    // Create a new association
+    await WorkersInProfession.create({ workerId, professionId });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error associating profession with worker:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 app.get('/workers', (req, res) => {
   res.send(workers)

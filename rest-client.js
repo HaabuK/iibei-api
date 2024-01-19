@@ -34,7 +34,10 @@ const vue = Vue.createApp({
       clientToDelete: null,
 
       // Workers
-      workerInModal: { name: null },
+      workerInModal: { name: null, 
+        professionId: '', 
+      },
+      workerProfession: null,
       workers: [],
       newWorker: {
         name: '',
@@ -43,7 +46,9 @@ const vue = Vue.createApp({
         phone: '',
         company: '',
         driverslicense: '',
+        profession: '',
       },
+      professions: [],
       updatedWorker: {
         name: '',
         salary: '',
@@ -51,7 +56,9 @@ const vue = Vue.createApp({
         phone: '',
         company: '',
         driverslicense: '',
+        profession: '',
       },
+      professions: [],
       workerToDelete: null,
 
     };
@@ -74,6 +81,7 @@ const vue = Vue.createApp({
       }
     } else if (window.location.pathname.endsWith('workers.html')) {
       try {
+        this.fetchProfessionData();
         this.workers = await (await fetch('http://localhost:7070/workers')).json();
         console.log('Workers:', this.workers);
       } catch (error) {
@@ -498,6 +506,28 @@ const vue = Vue.createApp({
       let workerInfoInModal = new bootstrap.Modal(document.getElementById('workerInfoInModal'), {});
       workerInfoInModal.show();
     },
+
+    async fetchProfessions() {
+      try {
+        const response = await fetch('http://localhost:7070/professions');
+        const data = await response.json();
+        this.professions = data;
+      } catch (error) {
+        console.error('Error fetching professions:', error);
+      }
+    },
+
+    async fetchProfessionData() {
+      if (this.workerInModal.professionId) {
+        try {
+          const response = await fetch(`http://localhost:7070/professions/${this.workerInModal.professionId}`);
+          const data = await response.json();
+          this.workerProfession = data;
+        } catch (error) {
+          console.error('Error fetching profession data:', error);
+        }
+      }
+    },
     
     createWorkerModal() {
       // Clear the form data
@@ -525,8 +555,19 @@ const vue = Vue.createApp({
         return;
       }
     
+      // Create the request body with the selected profession
+      const requestBody = {
+        name: this.newWorker.name.trim(),
+        salary: this.newWorker.salary.trim(),
+        email: this.newWorker.email.trim(),
+        phone: this.newWorker.phone.trim(),
+        company: this.newWorker.company.trim(),
+        driverslicense: this.newWorker.driverslicense.trim(),
+        professionId: this.newWorker.profession, // Assuming your server expects 'professionId'
+      };
+    
       // Implement the logic for creating a new worker here
-      console.log('Creating new worker:', this.newWorker);
+      console.log('Creating new worker:', requestBody);
     
       // Make a POST request to create a new worker
       fetch('http://localhost:7070/workers', {
@@ -534,14 +575,7 @@ const vue = Vue.createApp({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name: this.newWorker.name.trim(),
-          salary: this.newWorker.salary.trim(),
-          email: this.newWorker.email.trim(),
-          phone: this.newWorker.phone.trim(),
-          company: this.newWorker.company.trim(),
-          driverslicense: this.newWorker.driverslicense.trim(),
-        }),
+        body: JSON.stringify(requestBody),
       })
         .then(response => {
           if (!response.ok) {
@@ -549,12 +583,28 @@ const vue = Vue.createApp({
           }
           return response.json();
         })
-        .then(worker => {
+        .then(async worker => {
           // Handle the response from the server
           console.log('New worker created:', worker);
     
           // Add the new worker to the workers array
           this.workers.push(worker);
+    
+          // Associate the profession with the new worker
+          try {
+            const response = await fetch(`http://localhost:7070/workers/${worker.id}/associateProfession/${requestBody.professionId}`, {
+              method: 'POST',
+            });
+    
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            console.log('Profession associated with worker:', response.json());
+          } catch (error) {
+            console.error('Error associating profession with worker:', error);
+            // Handle the error appropriately (e.g., show an error message)
+          }
     
           // Close the modal after creating
           $('#createWorkerModal').modal('hide');
@@ -563,7 +613,7 @@ const vue = Vue.createApp({
           console.error('Error creating new worker:', error);
           // Handle the error appropriately (e.g., show an error message)
         });
-    },    
+    },
     
     
     openUpdateWorkerModal(worker) {
@@ -688,5 +738,9 @@ const vue = Vue.createApp({
         });
       }
     },
+  },
+  mounted() {
+    // Fetch professions data and assign it to the 'professions' property
+    this.fetchProfessions();
   },
 }).mount('#app');

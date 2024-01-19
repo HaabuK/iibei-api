@@ -1,5 +1,7 @@
 const {db} = require("../db")
 const Worker = db.workers
+// const Profession = require('./models/Profession.model');
+// const WorkersInProfession = require('./models/WorkersInProfession.model');
 
 exports.getAll = async (req,res) => {
     const workers = await Worker.findAll({attributes:["id", "name", "salary", "email","phone","company","driverslicense"]})
@@ -31,6 +33,29 @@ exports.createNew = async (req, res) => {
     .json(worker);
     console.log(worker)
 }
+
+exports.associateProfession = async (req, res) => {
+    const workerId = req.params.workerId;
+    const professionId = req.params.professionId;
+  
+    try {
+      // Find the worker and profession by their IDs
+      const worker = await Worker.findByPk(workerId);
+      const profession = await Profession.findByPk(professionId);
+  
+      if (!worker || !profession) {
+        return res.status(404).json({ error: 'Worker or profession not found' });
+      }
+  
+      // Create association using Sequelize method
+      await worker.addProfession(profession);
+  
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error associating profession with worker:', error);
+      res.status(500).json({ error: 'Something went wrong' });
+    }
+  };
 
 exports.deleteById = async (req, res) => {
     let result

@@ -17,9 +17,9 @@ db.Sequelize = Sequelize
 db.sequelize = sequelize
 db.jobs = require("./models/Job.model")(sequelize,Sequelize)
 db.professions = require("./models/Profession.model")(sequelize,Sequelize)
-db.workers = require("./models/Worker.model")(sequelize,Sequelize)
+db.workers = require("./models/Employee.model")(sequelize,Sequelize)
 db.clients = require("./models/Client.model")(sequelize,Sequelize)
-// db.workersinprofessions = require("./models/Workersinprofessions.model")(sequelize,Sequelize, db.workers, db.professions)
+db.workersInProfession = require("./models/WorkersInProfession.model")(sequelize, Sequelize, db.workers, db.professions);
 // db.orderedjobs = require("./models/Orderedjobs.model")(sequelize,Sequelize, db.workers, db.clients)
 
 async function Sync() {
