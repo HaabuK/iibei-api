@@ -84,6 +84,8 @@ const vue = Vue.createApp({
         this.fetchProfessionData();
         this.workers = await (await fetch('http://localhost:7070/workers')).json();
         console.log('Workers:', this.workers);
+        this.workers = await (await fetch('http://localhost:7070/workersInProfession')).json();
+        console.log('Worker jobs:', this.workersInProfession);
       } catch (error) {
         console.error('Error getting workers:', error); 
       }
@@ -518,11 +520,13 @@ const vue = Vue.createApp({
     },
 
     async fetchProfessionData() {
-      if (this.workerInModal.professionId) {
+      if (this.workerInModal.workerId) {
         try {
-          const response = await fetch(`http://localhost:7070/professions/${this.workerInModal.professionId}`);
+          const response = await fetch(`http://localhost:7070/workersInProfession/${this.workerInModal.workerId}`);
           const data = await response.json();
-          this.workerProfession = data;
+          
+          // Assuming the response includes the profession data
+          this.workerProfession = data.profession;
         } catch (error) {
           console.error('Error fetching profession data:', error);
         }

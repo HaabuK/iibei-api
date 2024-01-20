@@ -16,6 +16,7 @@ app.use(bodyParser.json());
 app.use(cors())
 app.use(express.json())
 
+
 // const professions = [{id: 1,name: "Koristaja", quote: 6},
 // {id: 2,name: "Kokk", quote: 10.00},
 // {id: 3,name: "Autojuht", quote: 9.00},
