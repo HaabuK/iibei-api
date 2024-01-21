@@ -262,6 +262,16 @@ const vue = Vue.createApp({
         });
       }
     },
+
+
+
+    
+     //CLIENTS
+     getClient: async function (id) {
+      this.clientInModal = await (await fetch(`http://localhost:7070/clients/${id}`)).json();
+      let clientInfoInModal = new bootstrap.Modal(document.getElementById('clientInfoInModal'), {});
+      clientInfoInModal.show();
+    },
     
 
 
