@@ -14,6 +14,25 @@ const vue = Vue.createApp({
       },
       professionToDelete: null,
 
+      // Clients
+      clientInModal: { name: null },
+      clients: [],
+      newClient: {
+        name: '',
+        location: '',
+        email: '',
+        phone: '',
+        company: '',
+      },
+      updatedClient: {
+        name: '',
+        location: '',
+        email: '',
+        phone: '',
+        company: '',
+      },
+      clientToDelete: null,
+
 
     };
   },
@@ -26,8 +45,15 @@ const vue = Vue.createApp({
       } catch (error) {
         console.error('Error getting professions:', error); 
       }
+    } else if (window.location.pathname.endsWith('clients.html')) {
+      try {
+        this.clients = await (await fetch('http://localhost:7070/clients')).json();
+        console.log('Clients:', this.clients);
+      } catch (error) {
+        console.error('Error getting clients:', error); 
+      }
     }
-    },
+  },
   methods: {
     //PROFESSIONS
     getProfession: async function (id) {
