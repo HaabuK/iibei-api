@@ -337,6 +337,87 @@ const vue = Vue.createApp({
           // Handle the error appropriately (e.g., show an error message)
         });
     },
+
+    openUpdateClientModal(client) {
+      // Set the updatedClient data based on the selected client
+      this.updatedClient = {
+        id: client.id,
+        name: '',
+        location: '',
+        email: '',
+        phone: '',
+        company: '',
+      };
+
+      // Open the updateClientModal
+      let updateClientModal = new bootstrap.Modal(document.getElementById('updateClientModal'), {});
+      updateClientModal.show();
+    },
+
+    updateClient() {
+      // Create an object with non-empty fields
+      const nonEmptyFields = {
+        name: this.updatedClient.name.trim(),
+        location: this.updatedClient.location.trim(),
+        email: this.updatedClient.email.trim(),
+        phone: this.updatedClient.phone.trim(),
+        company: this.updatedClient.company.trim(),
+      };
+    
+      // Remove fields with empty values
+      Object.keys(nonEmptyFields).forEach(key => {
+        if (!nonEmptyFields[key]) {
+          delete nonEmptyFields[key];
+        }
+      });
+    
+      // Check if there are any non-empty fields
+      if (Object.keys(nonEmptyFields).length === 0) {
+        console.error('Error: At least one field (name, location, email, phone, company) must be provided');
+        // Close the modal
+        $('#updateClientModal').modal('hide');
+        return;
+      }
+    
+      // Make a PUT request to update the client
+      fetch(`http://localhost:7070/clients/${this.updatedClient.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(nonEmptyFields),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(updatedClient => {
+          // Handle the response from the server
+          console.log('Client updated:', updatedClient);
+    
+          // Close the modal after updating
+          $('#updateClientModal').modal('hide');
+    
+          // Fetch the updated list of clients
+          return fetch('http://localhost:7070/clients');
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(clients => {
+          // Update the clients array with the updated list
+          this.clients = clients;
+        })
+        .catch(error => {
+          console.error('Error updating client:', error);
+          // Handle the error appropriately (e.g., show an error message)
+        });
+    },
     
 
 
