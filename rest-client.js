@@ -29,6 +29,12 @@ const vue = Vue.createApp({
     }
     },
   methods: {
+    //PROFESSIONS
+    getProfession: async function (id) {
+      this.professionInModal = await (await fetch(`http://localhost:7070/professions/${id}`)).json();
+      let professionInfoInModal = new bootstrap.Modal(document.getElementById('professionInfoInModal'), {});
+      professionInfoInModal.show();
+    },
     
 
 
