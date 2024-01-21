@@ -199,6 +199,43 @@ const vue = Vue.createApp({
           });
       }
     },
+
+    prepareDeleteProfession(professionInModal) {
+      // Set the profession to be deleted
+      this.professionToDelete = professionInModal;
+  
+      // Show the delete confirmation modal
+      let deleteConfirmationModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'), {});
+      deleteConfirmationModal.show();
+    },
+
+    deleteProfession() {
+      if (this.professionToDelete) {
+        // Implement the logic for deleting a profession here
+        console.log('Deleting profession with id:', this.professionToDelete.id);
+  
+        // Make a DELETE request to delete the profession
+        fetch(`http://localhost:7070/professions/${this.professionToDelete.id}`, {
+          method: 'DELETE',
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          // Remove the deleted profession from the professions array
+          this.professions = this.professions.filter(profession => profession.id !== this.professionToDelete.id);
+  
+          $('#deleteConfirmationModal').modal('hide');
+        })
+        .then(response =>{ 
+          $('#professionInfoInModal').modal('hide');
+        })
+        .catch(error => {
+          console.error('Error deleting profession:', error);
+          // Handle the error appropriately (e.g., show an error message)
+        });
+      }
+    },
     
 
 
