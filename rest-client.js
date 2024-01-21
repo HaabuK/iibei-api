@@ -703,12 +703,44 @@ getWorker: async function (id) {
           // Handle the error appropriately (e.g., show an error message)
         });
     },
+
+    prepareDeleteWorker(workerInModal) {
+      // Set the worker to be deleted
+      this.workerToDelete = workerInModal;
     
-
-
-
-   
+      // Show the delete confirmation modal
+      let deleteConfirmationModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'), {});
+      deleteConfirmationModal.show();
     },
+    
+    deleteWorker() {
+      if (this.workerToDelete) {
+        // Implement the logic for deleting a worker here
+        console.log('Deleting worker with id:', this.workerToDelete.id);
+    
+        // Make a DELETE request to delete the worker
+        fetch(`http://localhost:7070/workers/${this.workerToDelete.id}`, {
+          method: 'DELETE',
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          // Remove the deleted worker from the workers array
+          this.workers = this.workers.filter(worker => worker.id !== this.workerToDelete.id);
+    
+          $('#deleteConfirmationModal').modal('hide');
+        })
+        .then(response =>{ 
+          $('#workerInfoInModal').modal('hide');
+        })
+        .catch(error => {
+          console.error('Error deleting worker:', error);
+          // Handle the error appropriately (e.g., show an error message)
+        });
+      }
+    },
+  },
   mounted() {
     // Fetch professions data and assign it to the 'professions' property
     this.fetchProfessions();
