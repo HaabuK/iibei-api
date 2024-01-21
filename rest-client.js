@@ -531,6 +531,92 @@ getWorker: async function (id) {
         }
       }
     },
+
+    createWorkerModal() {
+      // Clear the form data
+      this.newWorker = {
+        name: '',
+        salary: '',
+        email: '',
+        phone: '',
+        company: '',
+        driverslicense: '',
+      };
+    
+      // Open the createWorkerModal
+      let createWorkerModal = new bootstrap.Modal(document.getElementById('createWorkerModal'), {});
+      createWorkerModal.show();
+    },
+    
+    createNewWorker() {
+      // Check if the name is empty
+      if (!this.newWorker.name.trim()) {
+        // Handle the case where the name is empty (you can show an error message)
+        console.error('Error: Name cannot be empty');
+        // Close the modal
+        $('#createWorkerModal').modal('hide');
+        return;
+      }
+    
+      // Create the request body with the selected profession
+      const requestBody = {
+        name: this.newWorker.name.trim(),
+        salary: this.newWorker.salary.trim(),
+        email: this.newWorker.email.trim(),
+        phone: this.newWorker.phone.trim(),
+        company: this.newWorker.company.trim(),
+        driverslicense: this.newWorker.driverslicense.trim(),
+        professionId: this.newWorker.profession, // Assuming your server expects 'professionId'
+      };
+    
+      // Implement the logic for creating a new worker here
+      console.log('Creating new worker:', requestBody);
+    
+      // Make a POST request to create a new worker
+      fetch('http://localhost:7070/workers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(async worker => {
+          // Handle the response from the server
+          console.log('New worker created:', worker);
+    
+          // Add the new worker to the workers array
+          this.workers.push(worker);
+    
+          // Associate the profession with the new worker
+          try {
+            const response = await fetch(`http://localhost:7070/workers/${worker.id}/associateProfession/${requestBody.professionId}`, {
+              method: 'POST',
+            });
+    
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+            console.log('Profession associated with worker:', response.json());
+          } catch (error) {
+            console.error('Error associating profession with worker:', error);
+            // Handle the error appropriately (e.g., show an error message)
+          }
+    
+          // Close the modal after creating
+          $('#createWorkerModal').modal('hide');
+        })
+        .catch(error => {
+          console.error('Error creating new worker:', error);
+          // Handle the error appropriately (e.g., show an error message)
+        });
+    },
     
 
 
