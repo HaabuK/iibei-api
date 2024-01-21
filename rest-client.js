@@ -498,11 +498,16 @@ const vue = Vue.createApp({
       }
     },
 
-//WORKERS
 
 
 
+   //WORKERS
 
+getWorker: async function (id) {
+  this.workerInModal = await (await fetch(`http://localhost:7070/workers/${id}`)).json();
+  let workerInfoInModal = new bootstrap.Modal(document.getElementById('workerInfoInModal'), {});
+  workerInfoInModal.show();
+},
     async fetchProfessions() {
       try {
         const response = await fetch('http://localhost:7070/professions');
