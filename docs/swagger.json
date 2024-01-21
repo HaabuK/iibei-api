@@ -6,90 +6,315 @@
       "description": "### This is a Swagger UI for our IIbei API  \n\n### Error handling\nErrors are presented using the HTTP status codes 400-599. The response include a more detailed explanation about the error in the body.\n\n```\n{\n  \"error\": \"Cleartext explanation of the error that occurred\"\n}\n```\n\n### Generic API errors\nThese error responses can be returned by any of the described endpoints.\n\n| HTTP status  |  Description |\n|---|---|\n| 400| Bad input parameters or invalid request. More information can be found in the response body.\n| 401| The consumer does not have access to the requested resource or the provided token is not valid.\n| 404| The requested resource can not be found or the user does not have access to the resource.\n| 5XX| A server error has occurred while processing the request. "
   },
   "paths": {
-      "/jobs": {
+    "/jobs": {
         "get": {
-            "tags": [
-                "details"
-            ],
+            "tags": ["jobs"],
+            "summary": "Get all jobs",
             "responses": {
-                "200": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "array",
-                                "items": {
-                                    "type": "string"
-                                }
-                            },
-                            "examples": {
-                                "Full details of a given job": {
-                                    "value": "[\n    {id: 1,name: \"Koristaja\", quote: 6},\n    {id: 2,name: \"Kokk\", quote: 10.00},\n    {id: 3,name: \"Autojuht\", quote: 9.00},\n    {id: 4,name: \"Maaler\", quote: 13.50},\n    {id: 5,name: \"Torumees\", quote: 15.25},\n    {id: 6,name: \"Lapsehoidja\", quote: 8.99},\n    {id: 7,name: \"Ehitaja\", quote: 10.99},\n    {id: 8,name: \"Raamatupidaja\", quote: 18.00},\n    {id: 9,name: \"Treener\", quote: 10.50}\n]"
-                                }
-                            }
-                        }
-                    },
-                    "description": "Returns full details of a given id job"
-                },
-                "404": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/error"
-                            },
-                            "examples": {
-                                "Job /w+ was not found": {
-                                    "value": "{\n    \"Job ||w+ was not found in job array.\"\n}"
-                                }
-                            }
-                        }
-                    },
-                    "description": "Job was not found in jobs array"
-                }
-            },
-            "operationId": "id",
-            "summary": "Get full details of a job",
-            "description": "Returns full details of a given id job"
-        },
-        "delete": {
-            "requestBody": {
+            "200": {
+                "description": "Successful response",
                 "content": {
-                    "delete-job": {
-                        "schema": {
-                            "$ref": "#/components/schemas/delete-job"
-                        }
+                "application/json": {
+                    "example": {
+                    "jobs": [
+                        { "id": 1, "name": "Koristaja", "quote": 6 },
+                        { "id": 2, "name": "Kokk", "quote": 10.00 },
+                        { "id": 3, "name": "Autojuht", "quote": 9.00 },
+                        { "id": 4, "name": "Maaler", "quote": 13.50 },
+                        { "id": 5, "name": "Torumees", "quote": 15.25 },
+                        { "id": 6, "name": "Lapsehoidja", "quote": 8.99 },
+                        { "id": 7, "name": "Ehitaja", "quote": 10.99 },
+                        { "id": 8, "name": "Raamatupidaja", "quote": 18.00 },
+                        { "id": 9, "name": "Treener", "quote": 10.50 }
+                    ]
                     }
-                },
-                "required": false
-            },
-            "tags": [
-                "delete"
-            ],
-            "parameters": [
-                {
-                    "name": "id",
-                    "in": "path",
-                    "required": true
                 }
-            ],
-            "responses": {
-                "204": {
-                    "description": "Successfully deleted"
-                },
-                "404": {
-                    "description": "Listing not found"
                 }
             },
-            "operationId": "delete",
-            "summary": "Delete a job",
-            "description": "Delete a job from list"
+            "404": {
+                "description": "No jobs found"
+            }
+            }
         },
-        "parameters": [
+        "post": {
+            "tags": ["jobs"],
+            "summary": "Create a new job",
+            "requestBody": {
+            "content": {
+                "application/json": {
+                "example": {
+                    "name": "New Job",
+                    "quote": 20.00
+                }
+                }
+            }
+            },
+            "responses": {
+            "201": {
+                "description": "Job created successfully",
+                "content": {
+                "application/json": {
+                    "example": {
+                    "id": 10,
+                    "name": "New Job",
+                    "quote": 20.00
+                    }
+                }
+                }
+            },
+            "400": {
+                "description": "Bad request"
+            }
+            }
+        }
+        },
+        "/jobs/{id}": {
+        "get": {
+            "tags": ["jobs"],
+            "summary": "Get a job by ID",
+            "parameters": [
             {
                 "name": "id",
                 "in": "path",
-                "required": true
+                "required": true,
+                "schema": {
+                "type": "integer"
+                }
             }
-        ]
+            ],
+            "responses": {
+            "200": {
+                "description": "Successful response",
+                "content": {
+                "application/json": {
+                    "example": {
+                    "id": 1,
+                    "name": "Koristaja",
+                    "quote": 6
+                    }
+                }
+                }
+            },
+            "404": {
+                "description": "Job not found"
+            }
+            }
+        },
+        "put": {
+            "tags": ["jobs"],
+            "summary": "Update a job by ID",
+            "parameters": [
+            {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                "type": "integer"
+                }
+            }
+            ],
+            "requestBody": {
+            "content": {
+                "application/json": {
+                "example": {
+                    "name": "Updated Job",
+                    "quote": 25.00
+                }
+                }
+            }
+            },
+            "responses": {
+            "200": {
+                "description": "Job updated successfully",
+                "content": {
+                "application/json": {
+                    "example": {
+                    "id": 1,
+                    "name": "Updated Job",
+                    "quote": 25.00
+                    }
+                }
+                }
+            },
+            "404": {
+                "description": "Job not found"
+            }
+            }
+        },
+        "delete": {
+            "tags": ["jobs"],
+            "summary": "Delete a job by ID",
+            "parameters": [
+            {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                "type": "integer"
+                }
+            }
+            ],
+            "responses": {
+            "204": {
+                "description": "Job deleted successfully"
+            },
+            "404": {
+                "description": "Job not found"
+            }
+            }
+        }
+        },
+  "/professions": {
+    "get": {
+      "tags": ["professions"],
+      "summary": "Get all professions",
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "content": {
+            "application/json": {
+              "example": {
+                "professions": [
+                  { "id": 1, "name": "Maaler", "field": "Ehitus" },
+                  { "id": 2, "name": "Lendur", "field": "Transport" }
+                ]
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "No professions found"
+        }
+      }
+    },
+    "post": {
+      "tags": ["professions"],
+      "summary": "Create a new profession",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "example": {
+              "name": "Pilot",
+              "field": "Transportation"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Profession created successfully",
+          "content": {
+            "application/json": {
+              "example": {
+                "id": 3,
+                "name": "Pilot",
+                "field": "Transportation"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request"
+        }
+      }
     }
+  },
+  "/professions/{id}": {
+    "get": {
+      "tags": ["professions"],
+      "summary": "Get a profession by ID",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "content": {
+            "application/json": {
+              "example": {
+                "id": 1,
+                "name": "Maaler",
+                "field": "Ehitus"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Profession not found"
+        }
+      }
+    },
+    "put": {
+      "tags": ["professions"],
+      "summary": "Update a profession by ID",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "example": {
+              "name": "Updated Maaler",
+              "field": "Updated Ehitus"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Profession updated successfully",
+          "content": {
+            "application/json": {
+              "example": {
+                "id": 1,
+                "name": "Updated Maaler",
+                "field": "Updated Ehitus"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Profession not found"
+        }
+      }
+    },
+    "delete": {
+      "tags": ["professions"],
+      "summary": "Delete a profession by ID",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "responses": {
+        "204": {
+          "description": "Profession deleted successfully"
+        },
+        "404": {
+          "description": "Profession not found"
+        }
+      }
+    }
+  }
+        
   }
 }
