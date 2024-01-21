@@ -265,12 +265,77 @@ const vue = Vue.createApp({
 
 
 
-    
+
      //CLIENTS
      getClient: async function (id) {
       this.clientInModal = await (await fetch(`http://localhost:7070/clients/${id}`)).json();
       let clientInfoInModal = new bootstrap.Modal(document.getElementById('clientInfoInModal'), {});
       clientInfoInModal.show();
+    },
+
+
+    createClientModal() {
+      // Clear the form data
+      this.newClient = {
+        name: '',
+        location: '',
+        email: '',
+        phone: '',
+        company: '',
+      };
+
+      // Open the createClientModal
+      let createClientModal = new bootstrap.Modal(document.getElementById('createClientModal'), {});
+      createClientModal.show();
+    },
+
+    createNewClient() {
+      // Check if at least the name is provided
+      if (!this.newClient.name.trim()) {
+        // Handle the case where the name is empty (you can show an error message)
+        console.error('Error: Name cannot be empty');
+        // Close the modal
+        $('#createClientModal').modal('hide');
+        return;
+      }
+    
+      // Implement the logic for creating a new client here
+      console.log('Creating new client:', this.newClient);
+    
+      // Make a POST request to create a new client
+      fetch('http://localhost:7070/clients', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: this.newClient.name.trim(),
+          location: this.newClient.location.trim(),
+          email: this.newClient.email.trim(),
+          phone: this.newClient.phone.trim(),
+          company: this.newClient.company.trim(),
+        }),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(client => {
+          // Handle the response from the server
+          console.log('New client created:', client);
+    
+          // Add the new client to the clients array
+          this.clients.push(client);
+    
+          // Close the modal after creating
+          $('#createClientModal').modal('hide');
+        })
+        .catch(error => {
+          console.error('Error creating new client:', error);
+          // Handle the error appropriately (e.g., show an error message)
+        });
     },
     
 
