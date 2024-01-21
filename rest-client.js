@@ -34,6 +34,35 @@ const vue = Vue.createApp({
       clientToDelete: null,
 
 
+       // Workers
+       workerInModal: { name: null, 
+        professionId: '', 
+      },
+      workerProfession: null,
+      workers: [],
+      newWorker: {
+        name: '',
+        salary: '',
+        email: '',
+        phone: '',
+        company: '',
+        driverslicense: '',
+        profession: '',
+      },
+      professions: [],
+      updatedWorker: {
+        name: '',
+        salary: '',
+        email: '',
+        phone: '',
+        company: '',
+        driverslicense: '',
+        profession: '',
+      },
+      professions: [],
+      workerToDelete: null,
+
+
     };
   },
   async created() {
@@ -51,6 +80,16 @@ const vue = Vue.createApp({
         console.log('Clients:', this.clients);
       } catch (error) {
         console.error('Error getting clients:', error); 
+      }
+    } else if (window.location.pathname.endsWith('workers.html')) {
+      try {
+        this.fetchProfessionData();
+        this.workers = await (await fetch('http://localhost:7070/workers')).json();
+        console.log('Workers:', this.workers);
+        this.workers = await (await fetch('http://localhost:7070/workersInProfession')).json();
+        console.log('Worker jobs:', this.workersInProfession);
+      } catch (error) {
+        console.error('Error getting workers:', error); 
       }
     }
   },
@@ -421,7 +460,7 @@ const vue = Vue.createApp({
 
 
 
-    
+
     prepareDeleteClient(clientInModal) {
       // Set the client to be deleted
       this.clientToDelete = clientInModal;
@@ -456,6 +495,35 @@ const vue = Vue.createApp({
           console.error('Error deleting client:', error);
           // Handle the error appropriately (e.g., show an error message)
         });
+      }
+    },
+
+//WORKERS
+
+
+
+
+    async fetchProfessions() {
+      try {
+        const response = await fetch('http://localhost:7070/professions');
+        const data = await response.json();
+        this.professions = data;
+      } catch (error) {
+        console.error('Error fetching professions:', error);
+      }
+    },
+
+    async fetchProfessionData() {
+      if (this.workerInModal.workerId) {
+        try {
+          const response = await fetch(`http://localhost:7070/workersInProfession/${this.workerInModal.workerId}`);
+          const data = await response.json();
+          
+          // Assuming the response includes the profession data
+          this.workerProfession = data.profession;
+        } catch (error) {
+          console.error('Error fetching profession data:', error);
+        }
       }
     },
     
