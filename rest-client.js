@@ -418,6 +418,46 @@ const vue = Vue.createApp({
           // Handle the error appropriately (e.g., show an error message)
         });
     },
+
+
+
+    
+    prepareDeleteClient(clientInModal) {
+      // Set the client to be deleted
+      this.clientToDelete = clientInModal;
+  
+      // Show the delete confirmation modal
+      let deleteConfirmationModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'), {});
+      deleteConfirmationModal.show();
+    },
+
+    deleteClient() {
+      if (this.clientToDelete) {
+        // Implement the logic for deleting a client here
+        console.log('Deleting client with id:', this.clientToDelete.id);
+  
+        // Make a DELETE request to delete the client
+        fetch(`http://localhost:7070/clients/${this.clientToDelete.id}`, {
+          method: 'DELETE',
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          // Remove the deleted client from the clients array
+          this.clients = this.clients.filter(client => client.id !== this.clientToDelete.id);
+  
+          $('#deleteConfirmationModal').modal('hide');
+        })
+        .then(response =>{ 
+          $('#clientInfoInModal').modal('hide');
+        })
+        .catch(error => {
+          console.error('Error deleting client:', error);
+          // Handle the error appropriately (e.g., show an error message)
+        });
+      }
+    },
     
 
 
