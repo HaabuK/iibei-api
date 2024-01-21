@@ -617,6 +617,92 @@ getWorker: async function (id) {
           // Handle the error appropriately (e.g., show an error message)
         });
     },
+
+
+
+    openUpdateWorkerModal(worker) {
+      // Set the updatedWorker data based on the selected worker
+      this.updatedWorker = {
+        id: worker.id,
+        name: '',
+        salary: '',
+        email: '',
+        phone: '',
+        company: '',
+        driverslicense: '',
+      };
+    
+      // Open the createWorkerModal
+      let createWorkerModal = new bootstrap.Modal(document.getElementById('updateWorkerModal'), {});
+      createWorkerModal.show();
+    },
+    
+    updateWorker() {
+      // Create an object with non-empty fields
+      const nonEmptyFields = {
+        name: this.updatedWorker.name.trim(),
+        salary: this.updatedWorker.salary.trim(),
+        email: this.updatedWorker.email.trim(),
+        phone: this.updatedWorker.phone.trim(),
+        company: this.updatedWorker.company.trim(),
+        driverslicense: this.updatedWorker.driverslicense.trim(),
+      };
+    
+      // Remove fields with empty values
+      Object.keys(nonEmptyFields).forEach(key => {
+        if (!nonEmptyFields[key]) {
+          delete nonEmptyFields[key];
+        }
+      });
+    
+      // Check if there are any non-empty fields
+      if (Object.keys(nonEmptyFields).length === 0) {
+        // All fields are empty, just close the modal
+        console.log('No fields provided for update. Closing modal.');
+        // Close the modal
+        $('#updateWorkerModal').modal('hide');
+        return;
+      }
+    
+      // Make a PUT request to update the worker
+      fetch(`http://localhost:7070/workers/${this.updatedWorker.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(nonEmptyFields),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(updatedWorker => {
+          // Handle the response from the server
+          console.log('Worker updated:', updatedWorker);
+    
+          // Close the modal after updating
+          $('#updateWorkerModal').modal('hide');
+    
+          // Fetch the updated list of workers
+          return fetch('http://localhost:7070/workers');
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(workers => {
+          // Update the workers array with the updated list
+          this.workers = workers;
+        })
+        .catch(error => {
+          console.error('Error updating worker:', error);
+          // Handle the error appropriately (e.g., show an error message)
+        });
+    },
     
 
 
