@@ -314,6 +314,177 @@
         }
       }
     }
+  },
+  "/workers": {
+    "get": {
+      "tags": ["workers"],
+      "summary": "Get all workers",
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "content": {
+            "application/json": {
+              "example": {
+                "workers": [
+                  { "id": 1, "name": "John Doe", "salary": 50000, "email": "john@example.com", "phone": "123-456-7890", "company": "ABC Corp", "driverslicense": "A12345" },
+                  { "id": 2, "name": "Jane Doe", "salary": 60000, "email": "jane@example.com", "phone": "987-654-3210", "company": "XYZ Inc", "driverslicense": "B67890" }
+                ]
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "No workers found"
+        }
+      }
+    },
+    "post": {
+      "tags": ["workers"],
+      "summary": "Create a new worker",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "example": {
+              "name": "Bob Smith",
+              "salary": 70000,
+              "email": "bob@example.com",
+              "phone": "456-789-0123",
+              "company": "123 Co",
+              "driverslicense": "C98765"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Worker created successfully",
+          "content": {
+            "application/json": {
+              "example": {
+                "id": 3,
+                "name": "Bob Smith",
+                "salary": 70000,
+                "email": "bob@example.com",
+                "phone": "456-789-0123",
+                "company": "123 Co",
+                "driverslicense": "C98765"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request"
+        }
+      }
+    }
+  },
+  "/workers/{id}": {
+    "get": {
+      "tags": ["workers"],
+      "summary": "Get a worker by ID",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "content": {
+            "application/json": {
+              "example": {
+                "id": 1,
+                "name": "John Doe",
+                "salary": 50000,
+                "email": "john@example.com",
+                "phone": "123-456-7890",
+                "company": "ABC Corp",
+                "driverslicense": "A12345"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Worker not found"
+        }
+      }
+    },
+    "put": {
+      "tags": ["workers"],
+      "summary": "Update a worker by ID",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "example": {
+              "name": "Updated John Doe",
+              "salary": 55000,
+              "email": "john.updated@example.com",
+              "phone": "123-456-7890",
+              "company": "ABC Corp",
+              "driverslicense": "A12345"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Worker updated successfully",
+          "content": {
+            "application/json": {
+              "example": {
+                "id": 1,
+                "name": "Updated John Doe",
+                "salary": 55000,
+                "email": "john.updated@example.com",
+                "phone": "123-456-7890",
+                "company": "ABC Corp",
+                "driverslicense": "A12345"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Worker not found"
+        }
+      }
+    },
+    "delete": {
+      "tags": ["workers"],
+      "summary": "Delete a worker by ID",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "responses": {
+        "204": {
+          "description": "Worker deleted successfully"
+        },
+        "404": {
+          "description": "Worker not found"
+        }
+      }
+    }
   }
         
   }
