@@ -485,6 +485,172 @@
         }
       }
     }
+  },
+  "/clients": {
+    "get": {
+      "tags": ["clients"],
+      "summary": "Get all clients",
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "content": {
+            "application/json": {
+              "example": {
+                "clients": [
+                  { "id": 1, "name": "Client A", "location": "City A", "email": "clientA@example.com", "phone": "111-111-1111", "company": "Company A" },
+                  { "id": 2, "name": "Client B", "location": "City B", "email": "clientB@example.com", "phone": "222-222-2222", "company": "Company B" }
+                ]
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "No clients found"
+        }
+      }
+    },
+    "post": {
+      "tags": ["clients"],
+      "summary": "Create a new client",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "example": {
+              "name": "New Client",
+              "location": "New City",
+              "email": "newclient@example.com",
+              "phone": "333-333-3333",
+              "company": "New Company"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Client created successfully",
+          "content": {
+            "application/json": {
+              "example": {
+                "id": 3,
+                "name": "New Client",
+                "location": "New City",
+                "email": "newclient@example.com",
+                "phone": "333-333-3333",
+                "company": "New Company"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request"
+        }
+      }
+    }
+  },
+  "/clients/{id}": {
+    "get": {
+      "tags": ["clients"],
+      "summary": "Get a client by ID",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "content": {
+            "application/json": {
+              "example": {
+                "id": 1,
+                "name": "Client A",
+                "location": "City A",
+                "email": "clientA@example.com",
+                "phone": "111-111-1111",
+                "company": "Company A"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Client not found"
+        }
+      }
+    },
+    "put": {
+      "tags": ["clients"],
+      "summary": "Update a client by ID",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "example": {
+              "name": "Updated Client A",
+              "location": "Updated City A",
+              "email": "updatedclientA@example.com",
+              "phone": "111-111-1111",
+              "company": "Updated Company A"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Client updated successfully",
+          "content": {
+            "application/json": {
+              "example": {
+                "id": 1,
+                "name": "Updated Client A",
+                "location": "Updated City A",
+                "email": "updatedclientA@example.com",
+                "phone": "111-111-1111",
+                "company": "Updated Company A"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Client not found"
+        }
+      }
+    },
+    "delete": {
+      "tags": ["clients"],
+      "summary": "Delete a client by ID",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "responses": {
+        "204": {
+          "description": "Client deleted successfully"
+        },
+        "404": {
+          "description": "Client not found"
+        }
+      }
+    }
   }
         
   }
