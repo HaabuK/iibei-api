@@ -30,6 +30,7 @@ module.exports = (app) => {
     app.route("/workersInProfession/:id")
         .get(workersInProfessionController.getById)
         .put(workersInProfessionController.updateById)
+        .delete(workersInProfessionController.deleteById)
 
     app.route("/workers")
         .get(workersController.getAll)

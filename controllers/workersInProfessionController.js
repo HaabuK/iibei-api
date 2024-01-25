@@ -4,6 +4,7 @@ const WorkersInProfession = db.workersInProfession
 //xh POST http://localhost:7070/workersInProfession workerId=5 professionId=5
 //xh get http://localhost:7070/workersInProfession
 //xh put http://localhost:7070/workersInProfession/6 professionId=5
+//xh delete http://localhost:7070/workersInProfession/5
 
 exports.getAll = async (req,res) => {
     const workersInProfession = await WorkersInProfession.findAll({attributes:["id", "workerId", "professionId"]})
@@ -65,4 +66,20 @@ exports.updateById = async (req, res) => {
   }
 };
 
+exports.deleteById = async (req, res) => {
+  let result
+  try {
+      result = await WorkersInProfession.destroy({where: {id: req.params.id}})
+  } catch (error) {
+      console.log("WorkersInProfessionDelete: ", error)
+      res.status(500).send({error:"Something has gone wrong"})
+      return
+  }
+  if (result === 0) {
+      res.status(404).send({error:"WorkersInProfession not found"})
+      return
+  }
+  res
+  .status(204).send()
+}
   
