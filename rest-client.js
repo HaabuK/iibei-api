@@ -82,6 +82,7 @@ const vue = Vue.createApp({
       try {
         this.workers = await (await fetch('http://localhost:7070/workers')).json();
         console.log('Workers:', this.workers);
+        this.fetchProfessionData();
       } catch (error) {
         console.error('Error getting workers:', error); 
       }
@@ -578,8 +579,7 @@ const vue = Vue.createApp({
         console.error('Error fetching worker data:', error);
       }
     },
-    
-    
+       
     showWorkerModal: function () {
       // Show the workerInfoInModal
       let workerInfoInModal = new bootstrap.Modal(document.getElementById('workerInfoInModal'), {});
@@ -614,6 +614,13 @@ const vue = Vue.createApp({
         return;
       }
     
+      // Check if a profession is selected
+      if (!this.newWorker.profession) {
+        // Handle the case where no profession is selected (show an error message)
+        console.error('Error: Please select a profession');
+        return;
+      }
+    
       // Create the request body with the selected profession
       const requestBody = {
         name: this.newWorker.name.trim(),
@@ -622,7 +629,7 @@ const vue = Vue.createApp({
         phone: this.newWorker.phone.trim(),
         company: this.newWorker.company.trim(),
         driverslicense: this.newWorker.driverslicense.trim(),
-        // professionId: this.newWorker.profession, // Assuming your server expects 'professionId'
+        professionId: this.newWorker.profession, // Include the selected professionId
       };
     
       // Implement the logic for creating a new worker here
@@ -649,21 +656,8 @@ const vue = Vue.createApp({
           // Add the new worker to the workers array
           this.workers.push(worker);
     
-          // Associate the profession with the new worker
-          try {
-            const response = await fetch(`http://localhost:7070/workers/${worker.id}/associateProfession/${requestBody.professionId}`, {
-              method: 'POST',
-            });
-    
-            if (!response.ok) {
-              throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-    
-            console.log('Profession associated with worker:', response.json());
-          } catch (error) {
-            console.error('Error associating profession with worker:', error);
-            // Handle the error appropriately (e.g., show an error message)
-          }
+          // Call the function to associate the profession with the new worker
+          await this.associateProfessionWithWorker(worker.id, requestBody.professionId);
     
           // Close the modal after creating
           $('#createWorkerModal').modal('hide');
@@ -674,23 +668,28 @@ const vue = Vue.createApp({
         });
     },
     
+    async associateProfessionWithWorker(wId, pId) {
+      try {
+        const requestBody = {
+          workerId: wId,
+          professionId: pId // Include the selected professionId
+        };
+        fetch('http://localhost:7070/workersInProfession', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody),
+        })
     
-    openUpdateWorkerModal(worker) {
-      // Set the updatedWorker data based on the selected worker
-      this.updatedWorker = {
-        id: worker.id,
-        name: '',
-        salary: '',
-        email: '',
-        phone: '',
-        company: '',
-        driverslicense: '',
-      };
-    
-      // Open the createWorkerModal
-      let createWorkerModal = new bootstrap.Modal(document.getElementById('updateWorkerModal'), {});
-      createWorkerModal.show();
+        console.log('Profession associated with worker:', response.json());
+      } catch (error) {
+        console.error('Error associating profession with worker:', error);
+        // Handle the error appropriately (e.g., show an error message)
+      }
     },
+    
+    
     
     updateWorker() {
       // Create an object with non-empty fields

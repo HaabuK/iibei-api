@@ -88,7 +88,7 @@
                 <div class="mb-3">
                   <label for="newWorkerProfession" class="form-label">Profession:</label>
                   <select class="form-select" id="newWorkerProfession" v-model="newWorker.profession">
-                    <option value="" disabled>Select a profession</option>
+                    <option value="">Select a profession</option>
                     <option v-for="profession in professions" :key="profession.id" :value="profession.id">{{ profession.name }}</option>
                   </select>
                 </div>
