@@ -547,6 +547,19 @@ const vue = Vue.createApp({
         // Check if a matching entry was found
         if (!wIP) {
           console.error('No matching workersInProfession entry found for worker ID:', id);
+          this.workerInModal = {
+            id: workerData.id,
+            name: workerData.name,
+            profession: 'Not Assigned',
+            salary: workerData.salary,
+            email: workerData.email,
+            phone: workerData.phone,
+            company: workerData.company,
+            driverslicense: workerData.driverslicense,
+          };
+      
+          // Manually trigger the modal to open using Bootstrap
+          this.showWorkerModal();
           return;
         }
     
@@ -689,7 +702,23 @@ const vue = Vue.createApp({
       }
     },
     
+    openUpdateWorkerModal(worker) {
+      // Set the updatedWorker data based on the selected worker
+      this.updatedWorker = {
+        id: worker.id,
+        name: '',
+        salary: '',
+        email: '',
+        phone: '',
+        company: '',
+        driverslicense: '',
+        profession: '',
+      };
     
+      // Open the createWorkerModal
+      let createWorkerModal = new bootstrap.Modal(document.getElementById('updateWorkerModal'), {});
+      createWorkerModal.show();
+    },
     
     updateWorker() {
       // Create an object with non-empty fields
@@ -700,6 +729,7 @@ const vue = Vue.createApp({
         phone: this.updatedWorker.phone.trim(),
         company: this.updatedWorker.company.trim(),
         driverslicense: this.updatedWorker.driverslicense.trim(),
+        professionId: this.updatedWorker.profession,
       };
     
       // Remove fields with empty values
@@ -732,9 +762,13 @@ const vue = Vue.createApp({
           }
           return response.json();
         })
-        .then(updatedWorker => {
+        .then(async updatedWorker => {
           // Handle the response from the server
           console.log('Worker updated:', updatedWorker);
+
+          if (nonEmptyFields.professionId) {
+            await this.associateProfessionWithWorker(updatedWorker.id, nonEmptyFields.professionId);
+          }
     
           // Close the modal after updating
           $('#updateWorkerModal').modal('hide');

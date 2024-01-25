@@ -51,7 +51,7 @@
             </div>
               <div class="modal-body">
                 <div class="h4" v-text="`Name: ${workerInModal.name}`"></div>
-                <div class="h4" v-text="`Profession: ${workerInModal.profession || ''}`"></div>
+                <div class="h4" v-if="workerInModal.profession" v-text="`Profession: ${workerInModal.profession}`"></div>
                 <div class="h4" v-text="`Salary: ${workerInModal.salary}`"></div>
                 <div class="h4" v-text="`Email: ${workerInModal.email}`"></div>
                 <div class="h4" v-text="`Phone: ${workerInModal.phone}`"></div>
@@ -136,6 +136,13 @@
                 <div class="mb-3">
                   <label for="updatedWorkerName" class="form-label">Name:</label>
                   <input type="text" class="form-control" id="updatedWorkerName" v-model="updatedWorker.name":placeholder="workerInModal.name" required>
+                </div>
+                <div class="mb-3">
+                  <label for="updatedWorkerProfession" class="form-label">Profession:</label>
+                  <select class="form-select" id="updatedWorkerProfession" v-model="updatedWorker.profession">
+                    <option :value="workerInModal.profession">{{ workerInModal.profession }}</option>
+                    <option v-for="profession in professions" :key="profession.id" :value="profession.id">{{ profession.name }}</option>
+                  </select>
                 </div>
                 <div class="mb-3">
                   <label for="updatedWorkerSalary" class="form-label">Salary:</label>
