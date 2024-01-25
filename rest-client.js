@@ -271,32 +271,69 @@ const vue = Vue.createApp({
       let deleteConfirmationModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'), {});
       deleteConfirmationModal.show();
     },
-
-    deleteProfession() {
+    
+    async deleteProfession() {
       if (this.professionToDelete) {
-        // Implement the logic for deleting a profession here
-        console.log('Deleting profession with id:', this.professionToDelete.id);
-  
-        // Make a DELETE request to delete the profession
-        fetch(`http://localhost:7070/professions/${this.professionToDelete.id}`, {
-          method: 'DELETE',
-        })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+        try {
+          // Fetch workersInProfession data for the profession
+          const wIPLink = await fetch(`http://localhost:7070/workersInProfession?professionId=${this.professionToDelete.id}`);
+          const wIPArray = await wIPLink.json();
+    
+          // Log the response from workersInProfession
+          console.log('WorkersInProfession response:', wIPArray);
+    
+          // Iterate over wIP entries and delete them
+          for (let i = 0; i < wIPArray.length; i++) {
+            const wIPEntry = wIPArray[i];
+            if(wIPEntry.professionId == this.professionToDelete.id){
+            await this.deleteWIP(wIPEntry);
+            }
           }
+    
+          // Delete the profession itself
+          const deleteProfessionResponse = await fetch(`http://localhost:7070/professions/${this.professionToDelete.id}`, {
+            method: 'DELETE',
+          });
+    
+          console.log('Delete profession response:', deleteProfessionResponse.status);
+    
+          if (!deleteProfessionResponse.ok) {
+            throw new Error(`HTTP error! Status: ${deleteProfessionResponse.status}`);
+          }
+    
           // Remove the deleted profession from the professions array
           this.professions = this.professions.filter(profession => profession.id !== this.professionToDelete.id);
-  
+    
+          // Hide the modals
           $('#deleteConfirmationModal').modal('hide');
-        })
-        .then(response =>{ 
           $('#professionInfoInModal').modal('hide');
-        })
-        .catch(error => {
+        } catch (error) {
           console.error('Error deleting profession:', error);
           // Handle the error appropriately (e.g., show an error message)
-        });
+        }
+      }
+    },
+
+    async deletepWIP(workerId, professionId) {
+      try {
+        // Fetch workersInProfession data for the specific worker and profession
+        const wIPLink = await fetch(`http://localhost:7070/workersInProfession?workerId=${workerId}&professionId=${professionId}`);
+        const wIPArray = await wIPLink.json();
+    
+        // Log the response from workersInProfession
+        console.log('WorkersInProfession response:', wIPArray);
+    
+        // Iterate over wIP entries and delete them
+        for (const wIPEntry of wIPArray) {
+          const deleteWIPResponse = await fetch(`http://localhost:7070/workersInProfession/${wIPEntry.id}`, {
+            method: 'DELETE',
+          });
+    
+          console.log('Deleted entry from workersInProfession:', await deleteWIPResponse.json());
+        }
+      } catch (error) {
+        console.error('Error deleting workersInProfession entries:', error);
+        // Handle the error appropriately (e.g., show an error message)
       }
     },
 
@@ -538,7 +575,16 @@ const vue = Vue.createApp({
         // Check if the array is not empty
         if (wIPArray.length === 0) {
           console.error('No matching workersInProfession found');
-          return;
+          this.workerInModal = {
+            id: workerData.id,
+            name: workerData.name,
+            profession: 'Not Assigned',
+            salary: workerData.salary,
+            email: workerData.email,
+            phone: workerData.phone,
+            company: workerData.company,
+            driverslicense: workerData.driverslicense
+          }
         }
     
         // Find the correct workersInProfession entry for the worker
@@ -833,33 +879,62 @@ const vue = Vue.createApp({
       deleteConfirmationModal.show();
     },
     
-    deleteWorker() {
+    async deleteWorker() {
       if (this.workerToDelete) {
-        // Implement the logic for deleting a worker here
-        console.log('Deleting worker with id:', this.workerToDelete.id);
+        try {
+          // Fetch workersInProfession data
+          const wIPLink = await fetch(`http://localhost:7070/workersInProfession?workerId=${this.workerToDelete.id}`);
+          const wIPArray = await wIPLink.json();
     
-        // Make a DELETE request to delete the worker
-        fetch(`http://localhost:7070/workers/${this.workerToDelete.id}`, {
-          method: 'DELETE',
-        })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+          // Log the response from workersInProfession
+          console.log('WorkersInProfession response:', wIPArray);
+    
+          const existingEntry = wIPArray.find(entry => entry.workerId === this.workerToDelete.id);
+    
+          if (existingEntry) {
+            // Delete entry from workersInProfession
+            await this.deleteWIP(existingEntry);
           }
+    
+          // Delete worker
+          console.log('Deleting worker with id:', this.workerToDelete.id);
+          const deleteWorkerResponse = await fetch(`http://localhost:7070/workers/${this.workerToDelete.id}`, {
+            method: 'DELETE',
+          });
+
+          
+    
+          console.log('Delete worker response:', deleteWorkerResponse.status);
+    
+          if (!deleteWorkerResponse.ok) {
+            throw new Error(`HTTP error! Status: ${deleteWorkerResponse.status}`);
+          }
+    
           // Remove the deleted worker from the workers array
           this.workers = this.workers.filter(worker => worker.id !== this.workerToDelete.id);
     
-          $('#deleteConfirmationModal').modal('hide');
-        })
-        .then(response =>{ 
+          // Hide the modals
           $('#workerInfoInModal').modal('hide');
-        })
-        .catch(error => {
+        } catch (error) {
           console.error('Error deleting worker:', error);
           // Handle the error appropriately (e.g., show an error message)
-        });
+        }
       }
     },
+    
+    async deleteWIP(existingEntry) {
+      try {
+        console.log('Deleting entry from workersInProfession:', existingEntry);
+        const deleteWIPResponse = await fetch(`http://localhost:7070/workersInProfession/${existingEntry.id}`, {
+          method: 'DELETE',
+        });
+    
+        console.log('Deleted entry from workersInProfession:', await deleteWIPResponse.json());
+      } catch (error) {
+        console.error('Error deleting workersInProfession entry:', error);
+        // Handle the error appropriately (e.g., show an error message)
+      }
+    }  
   },
   mounted() {
     // Fetch professions data and assign it to the 'professions' property
