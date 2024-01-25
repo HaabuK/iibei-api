@@ -182,7 +182,7 @@ app.get('/workersInProfession/:id', (req, res) => {
     return res.status(404).send({error: "WorkersInProfession not found"})
   }
     res.send(workersInProfession[req.params.id - 1])
-})
+});
 
 app.post('/workersInProfession', (req, res) => {
   if (!req.body.name || !req.body.quote) {
@@ -199,7 +199,7 @@ app.post('/workersInProfession', (req, res) => {
   res.status(201)
   .location(`${getBaseUrl(req)}/workersInProfession/${workersInProfession.length}`)
   .send(workersInProfession)
-})
+});
 
 
 app.delete('/workersInProfession/:id', (req, res) => {
@@ -208,7 +208,7 @@ app.delete('/workersInProfession/:id', (req, res) => {
   }
   workersInProfession.splice(req.params.id - 1, 1)
   res.status(204).send({error: "No content"})
-})
+});
 
 
 

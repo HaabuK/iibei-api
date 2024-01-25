@@ -4,23 +4,6 @@ const WorkersInProfession = db.workersInProfession
 //xh POST http://localhost:7070/workersInProfession workerId=1 professionId=1
 //xh POST http://localhost:7070/workersInProfession Content-Type:application/json '{"workerId"= 2, "professionId"= 2}' xh get http://localhost:7070/workersInProfession
 
-
-// exports.getAll = async (req, res) => {
-//     const workersInProfession = await WorkersInProfession.findAll({
-//         attributes: ["id", "workerId", "professionId"],
-//         logging: console.log
-//     })
-//     console.log(workersInProfession);
-//     let result = []
-//     result = workersInProfession.map((wp) => {
-//         return {
-//             "workerName": wp.worker.name,
-//             "profession": `$(wp.profession.name)`
-//         }
-//     })
-//     res.send(result);
-// }
-
 exports.getAll = async (req,res) => {
     const workersInProfession = await WorkersInProfession.findAll({attributes:["id", "workerId", "professionId"]})
     res.send(workersInProfession)
