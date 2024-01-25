@@ -9,7 +9,6 @@ const swaggerUi = require('swagger-ui-express')
 const swaggerDocument = require('./docs/swagger.json')
 const yamljs = require('yamljs')
 const bodyParser = require('body-parser');
-const WorkersInProfession = require('./models/WorkersInProfession.model');
 
 app.use(bodyParser.json());
 
@@ -117,29 +116,6 @@ app.delete('/clients/:id', (req, res) => {
 
 //WORKERS
 
-app.post('/workers/:workerId/associateProfession/:professionId', async (req, res) => {
-  const workerId = req.params.workerId;
-  const professionId = req.params.professionId;
-
-  try {
-    // Check if the association already exists
-    const existingAssociation = await WorkersInProfession.findOne({
-      where: { workerId, professionId },
-    });
-
-    if (existingAssociation) {
-      return res.status(400).json({ error: 'Association already exists' });
-    }
-
-    // Create a new association
-    await WorkersInProfession.create({ workerId, professionId });
-
-    res.json({ success: true });
-  } catch (error) {
-    console.error('Error associating profession with worker:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
 
 
 app.get('/workers', (req, res) => {
@@ -180,7 +156,62 @@ app.delete('/workers/:id', (req, res) => {
   res.status(204).send({error: "No content"})
 })
 
-//xh -v http://localhost:7070/professions name=Kuller quote=8.60
+
+//wIP
+
+// app.get('/workersInProfession', (req, res) => {
+//   res.send(workersInProfession)
+// })
+app.get('/workersInProfession', (req, res) => {
+  const result = workersInProfession.map((wip) => {
+    const worker = workers.find((worker) => worker.id === wip.workerId);
+    const profession = professions.find((profession) => profession.id === wip.professionId);
+
+    return {
+      id: wip.id,
+      worker: worker,
+      profession: profession,
+    };
+  });
+
+  res.json(result);
+});
+
+app.get('/workersInProfession/:id', (req, res) => {
+  if (typeof workersInProfession[req.params.id -1] === 'undefined'){
+    return res.status(404).send({error: "WorkersInProfession not found"})
+  }
+    res.send(workersInProfession[req.params.id - 1])
+})
+
+app.post('/workersInProfession', (req, res) => {
+  if (!req.body.name || !req.body.quote) {
+
+    return res.status(400).send({ error: 'One or all params are missing' })
+  }
+  let workersInProfession = {
+    id: workersInProfession.length + 1, 
+    workerId: req.body.workerId,
+    professionId: req.body.professionId
+  }
+
+  workersInProfession.push(workersInProfession)
+  res.status(201)
+  .location(`${getBaseUrl(req)}/workersInProfession/${workersInProfession.length}`)
+  .send(workersInProfession)
+})
+
+
+app.delete('/workersInProfession/:id', (req, res) => {
+  if (typeof workersInProfession[req.params.id - 1] === 'undefined') {
+      return res.status(404).send({error: "workersInProfession not found"})
+  }
+  workersInProfession.splice(req.params.id - 1, 1)
+  res.status(204).send({error: "No content"})
+})
+
+
+
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
@@ -192,11 +223,6 @@ app.use((err, req, res, next) => {
 app.listen(port, async () => {
   console.log(`API up at: http://localhost:${port}`)
 })
-
-// function getBaseUrl(req) { 
-//   return req.connection && req.connection.encrypted
-//   ? 'https': 'http' + `://${req.headers.host}`
-// }
 
 function getBaseUrl(req) { 
   return `${req.protocol}://${req.headers.host}`;

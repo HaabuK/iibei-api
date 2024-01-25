@@ -1,4 +1,3 @@
-// workersInProfession.js
 module.exports = (sequelize, Sequelize, Employee, Profession) => {
     const WorkersInProfession = sequelize.define("workersInProfession", {
       id: {
@@ -22,9 +21,12 @@ module.exports = (sequelize, Sequelize, Employee, Profession) => {
       }
     });
   
-    Employee.belongsToMany(Profession, { through: WorkersInProfession });
-    Profession.belongsToMany(Employee, { through: WorkersInProfession });
-  
-    return WorkersInProfession;
-  };
-  
+  Employee.belongsToMany(Profession, { through: WorkersInProfession });
+  Profession.belongsToMany(Employee, { through: WorkersInProfession });
+  Employee.hasMany(WorkersInProfession);
+  WorkersInProfession.belongsTo(Employee);
+  Profession.hasMany(WorkersInProfession);
+  WorkersInProfession.belongsTo(Profession);
+
+  return WorkersInProfession;
+};

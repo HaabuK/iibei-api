@@ -50,7 +50,7 @@
             </div>
               <div class="modal-body">
                 <div class="h4" v-text="`Name: ${workerInModal.name}`"></div>
-                <div class="h4" v-if="workerProfession" v-text="`Profession: ${workerProfession.name}`"></div>
+                <div class="h4" v-text="`Profession: ${workerInModal.profession || ''}`"></div>
                 <div class="h4" v-text="`Salary: ${workerInModal.salary}`"></div>
                 <div class="h4" v-text="`Email: ${workerInModal.email}`"></div>
                 <div class="h4" v-text="`Phone: ${workerInModal.phone}`"></div>

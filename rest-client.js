@@ -33,10 +33,9 @@ const vue = Vue.createApp({
       },
       clientToDelete: null,
 
-
-       // Workers
-       workerInModal: { name: null, 
-        professionId: '', 
+      // Workers
+      workerInModal: { name: null, 
+        //professionId: '', 
       },
       workerProfession: null,
       workers: [],
@@ -59,14 +58,11 @@ const vue = Vue.createApp({
         driverslicense: '',
         profession: '',
       },
-      professions: [],
       workerToDelete: null,
-
 
     };
   },
   async created() {
-    // Check if the current page is 'professions.html' or 'clients.html'
     if (window.location.pathname.endsWith('professions.html')) {
       try {
         this.professions = await (await fetch('http://localhost:7070/professions')).json();
@@ -86,8 +82,6 @@ const vue = Vue.createApp({
         this.fetchProfessionData();
         this.workers = await (await fetch('http://localhost:7070/workers')).json();
         console.log('Workers:', this.workers);
-        this.workers = await (await fetch('http://localhost:7070/workersInProfession')).json();
-        console.log('Worker jobs:', this.workersInProfession);
       } catch (error) {
         console.error('Error getting workers:', error); 
       }
@@ -100,7 +94,7 @@ const vue = Vue.createApp({
       let professionInfoInModal = new bootstrap.Modal(document.getElementById('professionInfoInModal'), {});
       professionInfoInModal.show();
     },
-
+    
     createProfessionModal() {
       // Clear the form data
       this.newProfession = {
@@ -158,6 +152,8 @@ const vue = Vue.createApp({
         });
       }
     },
+    
+
     openUpdateProfessionModal(profession) {
       // Set the updatedProfession data based on the selected profession
       this.updatedProfession = {
@@ -264,7 +260,8 @@ const vue = Vue.createApp({
           });
       }
     },
-
+    
+    
     prepareDeleteProfession(professionInModal) {
       // Set the profession to be deleted
       this.professionToDelete = professionInModal;
@@ -304,15 +301,13 @@ const vue = Vue.createApp({
 
 
 
-
-     //CLIENTS
-     getClient: async function (id) {
+    //CLIENTS
+    getClient: async function (id) {
       this.clientInModal = await (await fetch(`http://localhost:7070/clients/${id}`)).json();
       let clientInfoInModal = new bootstrap.Modal(document.getElementById('clientInfoInModal'), {});
       clientInfoInModal.show();
     },
-
-
+    
     createClientModal() {
       // Clear the form data
       this.newClient = {
@@ -376,6 +371,8 @@ const vue = Vue.createApp({
           // Handle the error appropriately (e.g., show an error message)
         });
     },
+    
+    
 
     openUpdateClientModal(client) {
       // Set the updatedClient data based on the selected client
@@ -457,10 +454,11 @@ const vue = Vue.createApp({
           // Handle the error appropriately (e.g., show an error message)
         });
     },
-
-
-
-
+    
+    
+    
+    
+    
     prepareDeleteClient(clientInModal) {
       // Set the client to be deleted
       this.clientToDelete = clientInModal;
@@ -500,38 +498,74 @@ const vue = Vue.createApp({
 
 
 
-
-   //WORKERS
-
-getWorker: async function (id) {
-  this.workerInModal = await (await fetch(`http://localhost:7070/workers/${id}`)).json();
-  let workerInfoInModal = new bootstrap.Modal(document.getElementById('workerInfoInModal'), {});
-  workerInfoInModal.show();
-},
-    async fetchProfessions() {
-      try {
-        const response = await fetch('http://localhost:7070/professions');
-        const data = await response.json();
-        this.professions = data;
-      } catch (error) {
-        console.error('Error fetching professions:', error);
-      }
+    //WORKERS
+    getWorker: async function (id) {
+      this.workerInModal = await (await fetch(`http://localhost:7070/workers/${id}`)).json();
+      let workerInfoInModal = new bootstrap.Modal(document.getElementById('workerInfoInModal'), {});
+      workerInfoInModal.show();
     },
 
-    async fetchProfessionData() {
-      if (this.workerInModal.workerId) {
-        try {
-          const response = await fetch(`http://localhost:7070/workersInProfession/${this.workerInModal.workerId}`);
-          const data = await response.json();
+    // getWorker: async function (id) {
+    //   try {
+    //     const workerResponse = await fetch(`http://localhost:7070/workers/${id}`);
+    //     this.workerInModal = await workerResponse.json();
+    
+    //     // Fetch workersInProfession data
+    //     const wIPLink = await fetch(`http://localhost:7070/workersInProfession?workerId=${id}`);
+    //     const wIP = await wIPLink.json();
+    
+    //     // Fetch profession details
+    //     const professionId = wIP.professionId;
+    //     const professionLink = await fetch(`http://localhost:7070/professions/${professionId}`);
+    //     const professionData = await professionLink.json();
+    
+    //     // Set the workerInModal data
+    //     this.workerInModal = {
+    //       id: workerResponse.id,
+    //       name: workerResponse.name,
+    //       profession: professionData.name,
+    //       salary: workerResponse.salary,
+    //       email: workerResponse.email,
+    //       phone: workerResponse.phone,
+    //       company: workerResponse.company,
+    //       driverslicense: workerResponse.driverslicense,
+    //    };
+
+    //     this.workerInModal.profession = professionData.name;
+    
+    //     // Show the workerInfoInModal
+    //     let workerInfoInModal = new bootstrap.Modal(document.getElementById('workerInfoInModal'), {});
+    //     workerInfoInModal.show();
+    //   } catch (error) {
+    //     console.error('Error fetching worker data:', error);
+    //   }
+    // },
+    
+
+    // async fetchProfessions() {
+    //   try {
+    //     const response = await fetch('http://localhost:7070/professions');
+    //     const data = await response.json();
+    //     this.professions = data;
+    //   } catch (error) {
+    //     console.error('Error fetching professions:', error);
+    //   }
+    // },
+
+    // async fetchProfessionData() {
+    //   if (this.workerInModal.workerId) {
+    //     try {
+    //       const response = await fetch(`http://localhost:7070/workersInProfession/${this.workerInModal.workerId}`);
+    //       const data = await response.json();
           
-          // Assuming the response includes the profession data
-          this.workerProfession = data.profession;
-        } catch (error) {
-          console.error('Error fetching profession data:', error);
-        }
-      }
-    },
-
+    //       // Assuming the response includes the profession data
+    //       this.workerProfession = data.profession;
+    //     } catch (error) {
+    //       console.error('Error fetching profession data:', error);
+    //     }
+    //   }
+    // },
+    
     createWorkerModal() {
       // Clear the form data
       this.newWorker = {
@@ -566,7 +600,7 @@ getWorker: async function (id) {
         phone: this.newWorker.phone.trim(),
         company: this.newWorker.company.trim(),
         driverslicense: this.newWorker.driverslicense.trim(),
-        professionId: this.newWorker.profession, // Assuming your server expects 'professionId'
+        // professionId: this.newWorker.profession, // Assuming your server expects 'professionId'
       };
     
       // Implement the logic for creating a new worker here
@@ -617,9 +651,8 @@ getWorker: async function (id) {
           // Handle the error appropriately (e.g., show an error message)
         });
     },
-
-
-
+    
+    
     openUpdateWorkerModal(worker) {
       // Set the updatedWorker data based on the selected worker
       this.updatedWorker = {
@@ -703,7 +736,9 @@ getWorker: async function (id) {
           // Handle the error appropriately (e.g., show an error message)
         });
     },
-
+    
+      
+    
     prepareDeleteWorker(workerInModal) {
       // Set the worker to be deleted
       this.workerToDelete = workerInModal;

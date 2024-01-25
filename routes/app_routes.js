@@ -2,7 +2,7 @@ const jobsController = require("../controllers/jobsController");
 const professionsController = require("../controllers/professionsController");
 const workersController = require("../controllers/workersController");
 const clientsController = require("../controllers/clientsController");
-//const workersInProfessionController = require("../controllers/WorkersInProfessionController");
+const workersInProfessionController = require("../controllers/workersInProfessionController");
 
 module.exports = (app) => {
     app.route("/jobs")
@@ -23,11 +23,9 @@ module.exports = (app) => {
         .put(professionsController.updateById)
         .delete(professionsController.deleteById)
 
-    app.route("/workersInProfessions")
-        .post(workersController.createNew);
-
-    app.route("/workers/:id/associateProfession/:professionId")
-        .post(workersController.associateProfession);
+    app.route("/workersInProfession")
+        .get(workersInProfessionController.getAll)
+        // .post(workersInProfessionController.createNew);
 
     app.route("/workers")
         .get(workersController.getAll)

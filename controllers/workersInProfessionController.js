@@ -1,25 +1,34 @@
 const {db} = require('../db')
-const WorkersInProfessions = db.workersInProfession
-const Worker = db.workers
+const WorkersInProfession = db.workersInProfession
 
 //xh POST http://localhost:7070/workersInProfession workerId=1 professionId=1
-//xh POST http://localhost:7070/workersInProfession Content-Type:application/json '{"workerId"= 2, "professionId"= 2}'
+//xh POST http://localhost:7070/workersInProfession Content-Type:application/json '{"workerId"= 2, "professionId"= 2}' xh get http://localhost:7070/workersInProfession
 
 
-exports.getAll = async (req, res) => {
-    const workersInProfession = await workersInProfession.findAll({
-        include: {all: true},
-        logging: console.log
-    })
-    console.log(workersInProfession);
-    let result = []
-    result = workersInProfession.map((wp) => {
-        return {
-            "workerName": wp.worker.name,
-            "profession": `$(wp.profession.name)`
-        }
-    })
-    res.send(result);
+// exports.getAll = async (req, res) => {
+//     const workersInProfession = await WorkersInProfession.findAll({
+//         attributes: ["id", "workerId", "professionId"],
+//         logging: console.log
+//     })
+//     console.log(workersInProfession);
+//     let result = []
+//     result = workersInProfession.map((wp) => {
+//         return {
+//             "workerName": wp.worker.name,
+//             "profession": `$(wp.profession.name)`
+//         }
+//     })
+//     res.send(result);
+// }
+
+exports.getAll = async (req,res) => {
+    const workersInProfession = await WorkersInProfession.findAll({attributes:["id", "workerId", "professionId"]})
+    res.send(workersInProfession)
+}
+
+exports.getById = async (req, res) => {
+  const workersInProfession = await WorkersInProfession.findByPk(req.params.id)
+  res.send(workersInProfession)
 }
 
 //xh post http://localhost:7070/workersInProfession workerId=2 professionId=2
@@ -63,37 +72,4 @@ exports.getAll = async (req, res) => {
 //       }
 //     }
 //   };
-
-app.post('/workersInProfession', async (req, res) => {
-  const { workerId, professionId } = req.body;
-
-  try {
-    // Validate input (check if IDs are present)
-    if (!workerId || !professionId) {
-      return res.status(400).json({ error: 'Worker ID and Profession ID are required' });
-    }
-
-    // Check if the specified worker and profession exist in the database
-    const worker = await db.workers.findByPk(workerId);
-    const profession = await db.professions.findByPk(professionId);
-
-    if (!worker || !profession) {
-      return res.status(404).json({ error: 'Worker or profession not found' });
-    }
-
-    // Create a new entry in WorkersInProfession
-    const workersInProfession = await db.workersInProfession.create({
-      workerId,
-      professionId,
-    });
-
-    res
-      .status(201)
-      .location(`/workersInProfession/${workersInProfession.id}`)
-      .json(workersInProfession);
-  } catch (error) {
-    console.error('Error creating workersInProfession:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
   
