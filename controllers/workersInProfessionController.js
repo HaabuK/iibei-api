@@ -1,7 +1,7 @@
 const {db} = require('../db')
 const WorkersInProfession = db.workersInProfession
 
-//xh POST http://localhost:7070/workersInProfession workerId=1 professionId=1
+//xh POST http://localhost:7070/workersInProfession workerId=5 professionId=5
 //xh POST http://localhost:7070/workersInProfession Content-Type:application/json '{"workerId"= 2, "professionId"= 2}' xh get http://localhost:7070/workersInProfession
 
 exports.getAll = async (req,res) => {
@@ -14,6 +14,26 @@ exports.getById = async (req, res) => {
   res.send(workersInProfession)
 }
 
+exports.createNew = async (req, res) => {
+  let workerInProfession
+  try {
+    workerInProfession = await WorkersInProfession.create(req.body)
+  } catch (error) {
+      if (error instanceof db.Sequelize.ValidationError) {
+          console.log(error)
+          res.status(400).send({"error":error.errors.map((item)=> item.message)})
+      } else {
+          console.log("WorkersInProfessionCreate: ", error)
+          res.status(500).send({"error":"Something has gone wrong"})
+      }
+      return
+  }
+  res
+  .status(201)
+  .location(`${getBaseUrl(req)}/workersInProfession/${workerInProfession.id}`)
+  .json(workerInProfession);
+  console.log(workerInProfession)
+}
 //xh post http://localhost:7070/workersInProfession workerId=2 professionId=2
 
 // exports.createNew = async (req, res) => {
