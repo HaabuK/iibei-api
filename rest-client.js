@@ -78,8 +78,8 @@ const vue = Vue.createApp({
         console.error('Error getting clients:', error); 
       }
     } else if (window.location.pathname.endsWith('workers.html')) {
+      // Fetch workers directly
       try {
-        this.fetchProfessionData();
         this.workers = await (await fetch('http://localhost:7070/workers')).json();
         console.log('Workers:', this.workers);
       } catch (error) {
@@ -499,72 +499,94 @@ const vue = Vue.createApp({
 
 
     //WORKERS
+    // getWorker: async function (id) {
+    //   this.workerInModal = await (await fetch(`http://localhost:7070/workers/${id}`)).json();
+    //   let workerInfoInModal = new bootstrap.Modal(document.getElementById('workerInfoInModal'), {});
+    //   workerInfoInModal.show();
+    // },
+    async fetchProfessionData() {
+      try {
+        const response = await fetch('http://localhost:7070/professions');
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        this.professions = await response.json();
+        console.log('Professions:', this.professions);
+      } catch (error) {
+        console.error('Error fetching professions:', error.message); 
+      }
+    },
+    closeWorkerInfoModal() {
+      let workerInfoInModal = new bootstrap.Modal(document.getElementById('workerInfoInModal'), {});
+      workerInfoInModal.hide();
+    },
+
     getWorker: async function (id) {
-      this.workerInModal = await (await fetch(`http://localhost:7070/workers/${id}`)).json();
+      try {
+        // Fetch worker data
+        const workerResponse = await fetch(`http://localhost:7070/workers/${id}`);
+        const workerData = await workerResponse.json();
+    
+        // Fetch workersInProfession data
+        const wIPLink = await fetch(`http://localhost:7070/workersInProfession?workerId=${id}`);
+        const wIPArray = await wIPLink.json();
+    
+        // Log the response from workersInProfession
+        console.log('WorkersInProfession response:', wIPArray);
+    
+        // Check if the array is not empty
+        if (wIPArray.length === 0) {
+          console.error('No matching workersInProfession found');
+          return;
+        }
+    
+        // Find the correct workersInProfession entry for the worker
+        const wIP = wIPArray.find(entry => entry.workerId === id);
+    
+        // Check if a matching entry was found
+        if (!wIP) {
+          console.error('No matching workersInProfession entry found for worker ID:', id);
+          return;
+        }
+    
+        // Check if professionId is defined
+        if (!wIP.professionId) {
+          console.error('ProfessionId is undefined');
+          return;
+        }
+    
+        // Fetch profession details
+        const professionId = wIP.professionId;
+        const professionLink = await fetch(`http://localhost:7070/professions/${professionId}`);
+        const professionData = await professionLink.json();
+    
+        // Set the workerInModal data
+        this.workerInModal = {
+          id: workerData.id,
+          name: workerData.name,
+          profession: professionData.name,
+          salary: workerData.salary,
+          email: workerData.email,
+          phone: workerData.phone,
+          company: workerData.company,
+          driverslicense: workerData.driverslicense,
+        };
+    
+        // Manually trigger the modal to open using Bootstrap
+        this.showWorkerModal();
+      } catch (error) {
+        console.error('Error fetching worker data:', error);
+      }
+    },
+    
+    
+    showWorkerModal: function () {
+      // Show the workerInfoInModal
       let workerInfoInModal = new bootstrap.Modal(document.getElementById('workerInfoInModal'), {});
       workerInfoInModal.show();
     },
-
-    // getWorker: async function (id) {
-    //   try {
-    //     const workerResponse = await fetch(`http://localhost:7070/workers/${id}`);
-    //     this.workerInModal = await workerResponse.json();
     
-    //     // Fetch workersInProfession data
-    //     const wIPLink = await fetch(`http://localhost:7070/workersInProfession?workerId=${id}`);
-    //     const wIP = await wIPLink.json();
-    
-    //     // Fetch profession details
-    //     const professionId = wIP.professionId;
-    //     const professionLink = await fetch(`http://localhost:7070/professions/${professionId}`);
-    //     const professionData = await professionLink.json();
-    
-    //     // Set the workerInModal data
-    //     this.workerInModal = {
-    //       id: workerResponse.id,
-    //       name: workerResponse.name,
-    //       profession: professionData.name,
-    //       salary: workerResponse.salary,
-    //       email: workerResponse.email,
-    //       phone: workerResponse.phone,
-    //       company: workerResponse.company,
-    //       driverslicense: workerResponse.driverslicense,
-    //    };
-
-    //     this.workerInModal.profession = professionData.name;
-    
-    //     // Show the workerInfoInModal
-    //     let workerInfoInModal = new bootstrap.Modal(document.getElementById('workerInfoInModal'), {});
-    //     workerInfoInModal.show();
-    //   } catch (error) {
-    //     console.error('Error fetching worker data:', error);
-    //   }
-    // },
-    
-
-    // async fetchProfessions() {
-    //   try {
-    //     const response = await fetch('http://localhost:7070/professions');
-    //     const data = await response.json();
-    //     this.professions = data;
-    //   } catch (error) {
-    //     console.error('Error fetching professions:', error);
-    //   }
-    // },
-
-    // async fetchProfessionData() {
-    //   if (this.workerInModal.workerId) {
-    //     try {
-    //       const response = await fetch(`http://localhost:7070/workersInProfession/${this.workerInModal.workerId}`);
-    //       const data = await response.json();
-          
-    //       // Assuming the response includes the profession data
-    //       this.workerProfession = data.profession;
-    //     } catch (error) {
-    //       console.error('Error fetching profession data:', error);
-    //     }
-    //   }
-    // },
+     
     
     createWorkerModal() {
       // Clear the form data

@@ -41,6 +41,7 @@
           <hr class="Title" style="margin-top: 20px; margin-bottom: 50px">
         </div>
       </div>
+      
       <!-- Worker Detail popup -->
       <div id="workerInfoInModal" class=" modal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -64,7 +65,7 @@
               <button type="button" class="btn btn-success" v-on:click="openUpdateWorkerModal(workerInModal)">
                 Update
               </button>
-              <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-danger" v-on:click="closeWorkerInfoModal">Close</button>
             </div>
           </div>
         </div>
