@@ -651,6 +651,157 @@
         }
       }
     }
+  },
+
+  "/workersInProfession": {
+    "get": {
+      "tags": ["workersInProfession"],
+      "summary": "Get all workersInProfession",
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "content": {
+            "application/json": {
+              "example": {
+                "workersInProfession": [
+                  { "id": 1, "workerId": 1, "professionId": 1 }
+                ]
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "No workersInProfession found"
+        }
+      }
+    },
+    "post": {
+      "tags": ["workersInProfession"],
+      "summary": "Create a new workersInProfession",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "example": {
+              "workerId": 1,
+              "professionId": 1
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "WorkersInProfession created successfully",
+          "content": {
+            "application/json": {
+              "example": {
+                "id": 1,
+                "workerId": 1,
+                "professionId": 1
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request"
+        }
+      }
+    }
+  },
+  "/workersInProfession/{id}": {
+    "get": {
+      "tags": ["workersInProfession"],
+      "summary": "Get a workersInProfession by ID",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "content": {
+            "application/json": {
+              "example": {
+                "id": 1,
+                "workerId": 1,
+                "professionId": 1
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "WorkersInProfession not found"
+        }
+      }
+    },
+    "put": {
+      "tags": ["workersInProfession"],
+      "summary": "Update a workersInProfession by ID",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "example": {
+              "workerId": 2,
+              "professionId": 1
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "WorkersInProfession updated successfully",
+          "content": {
+            "application/json": {
+              "example": {
+                "id": 1,
+                "workerId": 2,
+                "professionId": 1
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "WorkersInProfession not found"
+        }
+      }
+    },
+    "delete": {
+      "tags": ["workersInProfession"],
+      "summary": "Delete a workersInProfession by ID",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "responses": {
+        "204": {
+          "description": "WorkersInProfession deleted successfully"
+        },
+        "404": {
+          "description": "WorkersInProfession not found"
+        }
+      }
+    }
   }
         
   }
