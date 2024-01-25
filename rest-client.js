@@ -683,24 +683,54 @@ const vue = Vue.createApp({
     
     async associateProfessionWithWorker(wId, pId) {
       try {
-        const requestBody = {
-          workerId: wId,
-          professionId: pId // Include the selected professionId
-        };
-        fetch('http://localhost:7070/workersInProfession', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(requestBody),
-        })
+        // Fetch workersInProfession data
+        const wIPLink = await fetch(`http://localhost:7070/workersInProfession?workerId=${wId}`);
+        const wIPArray = await wIPLink.json();
     
-        console.log('Profession associated with worker:', response.json());
+        // Log the response from workersInProfession
+        console.log('WorkersInProfession response:', wIPArray);
+    
+        const existingEntry = wIPArray.find(entry => entry.workerId === wId);
+    
+        if (existingEntry) {
+          // If an entry exists, update it using the PUT method
+          const requestBody = {
+            workerId: wId,
+            professionId: pId,
+          };
+    
+          const response = await fetch(`http://localhost:7070/workersInProfession/${existingEntry.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+          });
+    
+          console.log('Profession updated for worker:', await response.json());
+        } else {
+          // If no entry exists, create a new one using the POST method
+          const newRequestBody = {
+            workerId: wId,
+            professionId: pId,
+          };
+    
+          const newResponse = await fetch('http://localhost:7070/workersInProfession', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newRequestBody),
+          });
+    
+          console.log('New profession associated with worker:', await newResponse.json());
+        }
       } catch (error) {
         console.error('Error associating profession with worker:', error);
         // Handle the error appropriately (e.g., show an error message)
       }
     },
+    
     
     openUpdateWorkerModal(worker) {
       // Set the updatedWorker data based on the selected worker
