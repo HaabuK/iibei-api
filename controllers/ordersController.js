@@ -16,4 +16,25 @@ exports.getById = async (req, res) => {
     res.send(orders)
 }
 
+exports.createNew = async (req, res) => {
+    let order
+    try {
+      order = await Order.create(req.body)
+    } catch (error) {
+        if (error instanceof db.Sequelize.ValidationError) {
+            console.log(error)
+            res.status(400).send({"error":error.errors.map((item)=> item.message)})
+        } else {
+            console.log("OrderCreate: ", error)
+            res.status(500).send({"error":"Something has gone wrong"})
+        }
+        return
+    }
+    res
+    .status(201)
+    .location(`${getBaseUrl(req)}/orders/${order.id}`)
+    .json(order);
+    console.log(order)
+  }
+
   

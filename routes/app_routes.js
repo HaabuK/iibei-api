@@ -54,6 +54,7 @@ module.exports = (app) => {
 
     app.route("/orders")
         .get(ordersController.getAll)
+        .post(ordersController.createNew)
     
     app.route("/orders/:id")
         .get(ordersController.getById)
