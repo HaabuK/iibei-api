@@ -37,4 +37,33 @@ exports.createNew = async (req, res) => {
     console.log(order)
   }
 
+  exports.updateById = async (req, res) => {
+    let result;
+    delete req.body.id;
+    
+    try {
+      result = await Order.update(req.body, { where: { id: req.params.id } });
+    } catch (error) {
+      console.log("OrderUpdate: ", error);
+      res.status(500).send({ error: "Something has gone wrong" });
+      return;
+    }
+  
+    if (result[0] === 0) {
+      res.status(404).send({ error: "Order not found" });
+      return;
+    }
+  
+    try {
+      const order = await Order.findByPk(req.params.id);
+      res
+        .status(200)
+        .location(`${getBaseUrl(req)}/orders/${order.id}`)
+        .json(order);
+    } catch (error) {
+      console.log("OrderFindByPk: ", error);
+      res.status(500).send({ error: "Something has gone wrong" });
+    }
+  };
+
   
