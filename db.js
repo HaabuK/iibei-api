@@ -20,7 +20,7 @@ db.professions = require("./models/Profession.model")(sequelize,Sequelize)
 db.workers = require("./models/Employee.model")(sequelize,Sequelize)
 db.clients = require("./models/Client.model")(sequelize,Sequelize)
 db.workersInProfession = require("./models/WorkersInProfession.model")(sequelize, Sequelize, db.workers, db.professions);
-// db.orderedjobs = require("./models/Orderedjobs.model")(sequelize,Sequelize, db.workers, db.clients)
+db.orders = require("./models/Orders.model")(sequelize,Sequelize, db.workers, db.clients)
 
 async function Sync() {
     await sequelize.sync({alter:true}) 

@@ -3,6 +3,7 @@ const professionsController = require("../controllers/professionsController");
 const workersController = require("../controllers/workersController");
 const clientsController = require("../controllers/clientsController");
 const workersInProfessionController = require("../controllers/workersInProfessionController");
+const ordersController = require("../controllers/ordersController");
 
 module.exports = (app) => {
     app.route("/jobs")
@@ -50,5 +51,9 @@ module.exports = (app) => {
         .get(clientsController.getById)
         .put(clientsController.updateById)
         .delete(clientsController.deleteById)
+
+    app.route("/orders")
+        .get(ordersController.getAll)
+        
         
 }
