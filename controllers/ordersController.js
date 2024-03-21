@@ -11,4 +11,9 @@ exports.getAll = async (req,res) => {
     res.send(orders)
 }
 
+exports.getById = async (req, res) => {
+    const orders = await Order.findByPk(req.params.id)
+    res.send(orders)
+}
+
   
