@@ -1190,6 +1190,44 @@ const vue = Vue.createApp({
             // Handle the error appropriately (e.g., show an error message)
         });
 },
+
+prepareDeleteOrder(orderInModal) {
+  // Set the order to be deleted
+  this.orderToDelete = orderInModal;
+
+  // Show the delete confirmation modal
+  let deleteConfirmationModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'), {});
+  deleteConfirmationModal.show();
+},
+
+deleteOrder() {
+  if (this.orderToDelete) {
+    // Implement the logic for deleting a client here
+    console.log('Deleting order with id:', this.orderToDelete.id);
+
+    // Make a DELETE request to delete the client
+    fetch(`http://localhost:7070/orders/${this.orderToDelete.id}`, {
+      method: 'DELETE',
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      // Remove the deleted order from the clients array
+      this.orders = this.orders.filter(order => order.id !== this.orderToDelete.id);
+
+      $('#deleteConfirmationModal').modal('hide');
+    })
+    .then(response =>{ 
+      $('#orderInfoInModal').modal('hide');
+    })
+    .catch(error => {
+      console.error('Error deleting order:', error);
+      // Handle the error appropriately (e.g., show an error message)
+    });
+  }
+  },
+
 },
 mounted() {
   this.fetchWorkerData();
