@@ -59,6 +59,7 @@ module.exports = (app) => {
     app.route("/orders/:id")
         .get(ordersController.getById)
         .put(ordersController.updateById)
+        .delete(ordersController.deleteById)
         
         
 }
