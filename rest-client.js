@@ -1044,7 +1044,70 @@ const vue = Vue.createApp({
       let orderInfoInModal = new bootstrap.Modal(document.getElementById('orderInfoInModal'), {});
       orderInfoInModal.hide();
   },
-  // Define other methods as needed
+  createOrderModal() {
+    // Clear the form data
+    this.newOrder = {
+      worker: '',
+      client: '',
+      duration: '',
+      status: '',
+      info: '',
+      
+    };
+  
+    // Open the createOrderModal
+    let createOrderModal = new bootstrap.Modal(document.getElementById('createOrderModal'), {});
+    createOrderModal.show();
+  },
+  
+  createNewOrder() {
+    // Check if the worker and client IDs are selected
+    if (!this.newOrder.worker || !this.newOrder.client) {
+        console.error('Error: Please select a worker and client');
+        return;
+    }
+
+    // Create the request body with the selected worker and client IDs
+    const requestBody = {
+        workerId: this.newOrder.worker,
+        clientId: this.newOrder.client,
+        duration: this.newOrder.duration,
+        status: this.newOrder.status,
+        info: this.newOrder.info,
+    };
+
+    // Implement the logic for creating a new order here
+    console.log('Creating new order:', requestBody);
+
+    // Make a POST request to create a new order
+    fetch('http://localhost:7070/orders', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(async order => {
+        // Handle the response from the server
+        console.log('New order created:', order);
+
+        // Add the new order to the orders array
+        this.orders.push(order);
+
+        // Close the modal after creating
+        $('#createOrderModal').modal('hide');
+    })
+    .catch(error => {
+        console.error('Error creating new order:', error);
+        // Handle the error appropriately (e.g., show an error message)
+      });
+  },
 },
 mounted() {
   this.fetchWorkerData();

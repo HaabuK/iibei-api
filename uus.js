@@ -1,156 +1,51 @@
-    //ORDERS
-    async fetchWorkerData() {
-        try {
-          const response = await fetch('http://localhost:7070/workers');
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          this.professions = await response.json();
-          console.log('Workers:', this.workers);
-        } catch (error) {
-          console.error('Error fetching workers:', error.message); 
-        }
-      },
-    async fetchClientData() {
-        try {
-          const response = await fetch('http://localhost:7070/clients');
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          this.clients = await response.json();
-          console.log('Clients:', this.clients);
-        } catch (error) {
-          console.error('Error fetching clients:', error.message); 
-        }
-      },
-      closeOrderrInfoModal() {
-        let orderInfoInModal = new bootstrap.Modal(document.getElementById('orderInfoInModal'), {});
-        orderInfoInModal.hide();
-      },
-  
-      getOrder: async function (id) {
-        try {
-          // Fetch order data
-          const orderResponse = await fetch(`http://localhost:7070/orders/${id}`);
-          const orderData = await orderResponse.json();
-          const WorkerId = orderData.workerId;
-          const ClientId = orderData.clientId;
-      
-          // Fetch worker data
-          const workerLink = await fetch(`http://localhost:7070/workers?id=${WorkerId}`);
-          const workerArray = await workerLink.json();
-
-          // Fetch client data
-          const clientLink = await fetch(`http://localhost:7070/clients?id=${ClientId}`);
-          const clientArray = await clientLink.json();
-      
-          console.log('Workers response:', workerArray);
-          console.log('Clients response:', clientArray);
-          }
-      
-          // Find the correct workersInProfession entry for the worker
-          //const wIP = wIPArray.find(entry => entry.workerId === id);
-      
-          // Check if a matching entry was found
-        //   if (!wIP) {
-        //     console.error('No matching workersInProfession entry found for worker ID:', id);
-        //     this.workerInModal = {
-        //       id: workerData.id,
-        //       name: workerData.name,
-        //       profession: 'Not Assigned',
-        //       salary: workerData.salary,
-        //       email: workerData.email,
-        //       phone: workerData.phone,
-        //       company: workerData.company,
-        //       driverslicense: workerData.driverslicense,
-        //     };
-        
-        //     // Manually trigger the modal to open using Bootstrap
-        //     this.showWorkerModal();
-        //     return;
-        //   }
-      
-        //   // Check if professionId is defined
-        //   if (!wIP.professionId) {
-        //     console.error('ProfessionId is undefined');
-        //     return;
-        //   }
-      
-          // Set the orderInModal data
-          this.orderInModal = {
-            id: orderData.id,
-            worker: workerData.name,
-            client: clientData.name,
-            duration: orderData.duration,
-            status: orderData.status,
-            info: orderData.info,
-            
-          };
-      
-          // Manually trigger the modal to open using Bootstrap
-          this.showOrderModal();
-        } catch (error) {
-          console.error('Error fetching order data:', error);
-        }
-      },
-         
-      showOrderModal: function () {
-        // Show the orderInfoInModal
-        let orderInfoInModal = new bootstrap.Modal(document.getElementById('orderInfoInModal'), {});
-        orderInfoInModal.show();
-      },
-      
-       
-      
-      createWorkerModal() {
+   
+      createOrderModal() {
         // Clear the form data
-        this.newWorker = {
-          name: '',
-          salary: '',
-          email: '',
-          phone: '',
-          company: '',
-          driverslicense: '',
+        this.newOrder = {
+          worker: '',
+          client: '',
+          duration: '',
+          status: '',
+          info: '',
+          
         };
       
-        // Open the createWorkerModal
-        let createWorkerModal = new bootstrap.Modal(document.getElementById('createWorkerModal'), {});
-        createWorkerModal.show();
+        // Open the createOrderModal
+        let createOrderModal = new bootstrap.Modal(document.getElementById('createOrderModal'), {});
+        createOrderModal.show();
       },
       
-      createNewWorker() {
+      createNewOrder() {
         // Check if the name is empty
-        if (!this.newWorker.name.trim()) {
+        if (!this.newOrder.worker()) {
           // Handle the case where the name is empty (you can show an error message)
           console.error('Error: Name cannot be empty');
           // Close the modal
-          $('#createWorkerModal').modal('hide');
+          $('#createOrderModal').modal('hide');
           return;
         }
       
         // Check if a profession is selected
-        if (!this.newWorker.profession) {
+        if (!this.newOrder.client) {
           // Handle the case where no profession is selected (show an error message)
-          console.error('Error: Please select a profession');
+          console.error('Error: Please select a client');
           return;
         }
       
         // Create the request body with the selected profession
         const requestBody = {
-          name: this.newWorker.name.trim(),
-          salary: this.newWorker.salary.trim(),
-          email: this.newWorker.email.trim(),
-          phone: this.newWorker.phone.trim(),
-          company: this.newWorker.company.trim(),
-          driverslicense: this.newWorker.driverslicense.trim(),
-          professionId: this.newWorker.profession, // Include the selected professionId
+          worker: this.newOrder.worker,
+          client: this.newOrder.client,
+          duration: this.newOrder.duration,
+          status: this.newOrder.status,
+          info: this.newOrder.info,
         };
       
-        // Implement the logic for creating a new worker here
-        console.log('Creating new worker:', requestBody);
+        // Implement the logic for creating a new order here
+        console.log('Creating new order:', requestBody);
       
-        // Make a POST request to create a new worker
-        fetch('http://localhost:7070/workers', {
+        // Make a POST request to create a new order
+        fetch('http://localhost:7070/orders', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -163,74 +58,24 @@
             }
             return response.json();
           })
-          .then(async worker => {
+          .then(async order => {
             // Handle the response from the server
-            console.log('New worker created:', worker);
+            console.log('New order created:', order);
       
-            // Add the new worker to the workers array
-            this.workers.push(worker);
+            // Add the new order to the orders array
+            this.orders.push(order);
       
-            // Call the function to associate the profession with the new worker
-            await this.associateProfessionWithWorker(worker.id, requestBody.professionId);
       
             // Close the modal after creating
-            $('#createWorkerModal').modal('hide');
+            $('#createOrderModal').modal('hide');
           })
           .catch(error => {
-            console.error('Error creating new worker:', error);
+            console.error('Error creating new order:', error);
             // Handle the error appropriately (e.g., show an error message)
           });
       },
       
-      async associateProfessionWithWorker(wId, pId) {
-        try {
-          // Fetch workersInProfession data
-          const wIPLink = await fetch(`http://localhost:7070/workersInProfession?workerId=${wId}`);
-          const wIPArray = await wIPLink.json();
-      
-          // Log the response from workersInProfession
-          console.log('WorkersInProfession response:', wIPArray);
-      
-          const existingEntry = wIPArray.find(entry => entry.workerId === wId);
-      
-          if (existingEntry) {
-            // If an entry exists, update it using the PUT method
-            const requestBody = {
-              workerId: wId,
-              professionId: pId,
-            };
-      
-            const response = await fetch(`http://localhost:7070/workersInProfession/${existingEntry.id}`, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(requestBody),
-            });
-      
-            console.log('Profession updated for worker:', await response.json());
-          } else {
-            // If no entry exists, create a new one using the POST method
-            const newRequestBody = {
-              workerId: wId,
-              professionId: pId,
-            };
-      
-            const newResponse = await fetch('http://localhost:7070/workersInProfession', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(newRequestBody),
-            });
-      
-            console.log('New profession associated with worker:', await newResponse.json());
-          }
-        } catch (error) {
-          console.error('Error associating profession with worker:', error);
-          // Handle the error appropriately (e.g., show an error message)
-        }
-      },
+    
       
       
       openUpdateWorkerModal(worker) {

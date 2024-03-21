@@ -85,35 +85,30 @@
               <!-- Form for creating a new order -->
               <form>
                 <div class="mb-3">
-                  <label for="newOrderName" class="form-label">Name:</label>
-                  <input type="text" class="form-control" id="newOrderName" v-model="newOrder.name" required>
+                    <label for="newOrderWorker" class="form-label">Worker:</label>
+                    <select class="form-select" id="newOrderWorker" v-model="newOrder.worker">
+                      <option value="">Select a worker</option>
+                      <option v-for="worker in workers" :key="worker.id" :value="worker.id">{{ worker.name }}</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="newOrderClient" class="form-label">Client:</label>
+                    <select class="form-select" id="newOrderClient" v-model="newOrder.client">
+                      <option value="">Select a client</option>
+                      <option v-for="client in clients" :key="client.id" :value="client.id">{{ client.name }}</option>
+                    </select>
+                  </div>
+                <div class="mb-3">
+                  <label for="newOrderDuration" class="form-label">Duration:</label>
+                  <input type="text" class="form-control" id="newOrderDuration" v-model="newOrder.duration" placeholder="hours">
                 </div>
                 <div class="mb-3">
-                  <label for="newOrderProfession" class="form-label">Profession:</label>
-                  <select class="form-select" id="newOrderProfession" v-model="newOrder.profession">
-                    <option value="">Select a profession</option>
-                    <option v-for="profession in professions" :key="profession.id" :value="profession.id">{{ profession.name }}</option>
-                  </select>
+                  <label for="newOrderStatus" class="form-label">Status:</label>
+                  <input type="text" class="form-control" id="newOrderStatus" v-model="newOrder.status" >
                 </div>
                 <div class="mb-3">
-                  <label for="newOrderSalary" class="form-label">Salary:</label>
-                  <input type="text" class="form-control" id="newOrderSalary" v-model="newOrder.salary" required>
-                </div>
-                <div class="mb-3">
-                  <label for="newOrderEmail" class="form-label">Email:</label>
-                  <input type="text" class="form-control" id="newOrderEmail" v-model="newOrder.email" required>
-                </div>
-                <div class="mb-3">
-                  <label for="newOrderPhone" class="form-label">Phone:</label>
-                  <input type="text" class="form-control" id="newOrderPhone" v-model="newOrder.phone" required>
-                </div>
-                <div class="mb-3">
-                  <label for="newOrderCompany" class="form-label">Company:</label>
-                  <input type="text" class="form-control" id="newOrderCompany" v-model="newOrder.company">
-                </div>
-                <div class="mb-3">
-                  <label for="newOrderDriversLicense" class="form-label">Drivers License:</label>
-                  <input type="text" class="form-control" id="newOrderDriversLicense" v-model="newOrder.driverslicense">
+                  <label for="newOrderInfo" class="form-label">Info:</label>
+                  <input type="text" class="form-control" id="newOrderInfo" v-model="newOrder.info" >
                 </div>
               </form>
             </div>
