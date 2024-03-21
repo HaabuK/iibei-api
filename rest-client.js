@@ -1108,6 +1108,88 @@ const vue = Vue.createApp({
         // Handle the error appropriately (e.g., show an error message)
       });
   },
+
+  openUpdateOrderModal(order) {
+    // Set the updatedWorker data based on the selected worker
+    this.updatedOrder = {
+      id: order.id,
+      worker: '',
+      client: '',
+      duration: '',
+      status: '',
+      info: '',
+    };
+  
+    // Open the updateOrderModal
+    let updateOrderModal = new bootstrap.Modal(document.getElementById('updateOrderModal'), {});
+    updateOrderModal.show();
+  },
+  
+  updateOrder() {
+    // Create an object with non-empty fields
+    const nonEmptyFields = {
+        workerId: this.updatedOrder.worker,
+        clientId: this.updatedOrder.client,
+        duration: this.updatedOrder.duration.trim(),
+        status: this.updatedOrder.status.trim(),
+        info: this.updatedOrder.info.trim(),
+    };
+
+    // Remove fields with empty values
+    Object.keys(nonEmptyFields).forEach(key => {
+        if (!nonEmptyFields[key]) {
+            delete nonEmptyFields[key];
+        }
+    });
+
+    // Check if there are any non-empty fields
+    if (Object.keys(nonEmptyFields).length === 0) {
+        // All fields are empty, just close the modal
+        console.log('No fields provided for update. Closing modal.');
+        // Close the modal
+        $('#updateOrderModal').modal('hide');
+        return;
+    }
+
+    // Make a PUT request to update the order
+    fetch(`http://localhost:7070/orders/${this.updatedOrder.id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(nonEmptyFields),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(async updatedOrder => {
+            // Handle the response from the server
+            console.log('Order updated:', updatedOrder);
+
+            // Close the modal after updating
+            $('#updateOrderModal').modal('hide');
+
+            // Fetch the updated list of orders
+            return fetch('http://localhost:7070/orders');
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(orders => {
+            // Update the orders array with the updated list
+            this.orders = orders;
+        })
+        .catch(error => {
+            console.error('Error updating order:', error);
+            // Handle the error appropriately (e.g., show an error message)
+        });
+},
 },
 mounted() {
   this.fetchWorkerData();

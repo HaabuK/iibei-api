@@ -129,41 +129,36 @@
             </div>
       
             <div class="modal-body">
-              <!-- Form for updating a order -->
-              <form>
-                <div class="mb-3">
-                  <label for="updatedOrderName" class="form-label">Name:</label>
-                  <input type="text" class="form-control" id="updatedOrderName" v-model="updatedOrder.name":placeholder="orderInModal.name" required>
-                </div>
-                <div class="mb-3">
-                  <label for="updatedOrderProfession" class="form-label">Profession:</label>
-                  <select class="form-select" id="updatedOrderProfession" v-model="updatedOrder.profession">
-                    <option :value="orderInModal.profession">{{ orderInModal.profession }}</option>
-                    <option v-for="profession in professions" :key="profession.id" :value="profession.id">{{ profession.name }}</option>
-                  </select>
-                </div>
-                <div class="mb-3">
-                  <label for="updatedOrderSalary" class="form-label">Salary:</label>
-                  <input type="text" class="form-control" id="updatedOrderSalary" v-model="updatedOrder.salary" :placeholder="orderInModal.salary">
-                </div>
-                <div class="mb-3">
-                  <label for="updatedOrderEmail" class="form-label">Email:</label>
-                  <input type="text" class="form-control" id="updatedOrderEmail" v-model="updatedOrder.email" :placeholder="orderInModal.email">
-                </div>
-                <div class="mb-3">
-                  <label for="updatedOrderPhone" class="form-label">Phone:</label>
-                  <input type="text" class="form-control" id="updatedOrderPhone" v-model="updatedOrder.phone" :placeholder="orderInModal.phone">
-                </div>
-                <div class="mb-3">
-                  <label for="updatedOrderCompany" class="form-label">Company:</label>
-                  <input type="text" class="form-control" id="updatedOrderCompany" v-model="updatedOrder.company" :placeholder="orderInModal.company">
-                </div>
-                <div class="mb-3">
-                  <label for="updatedOrderDriversLicense" class="form-label">Drivers License:</label>
-                  <input type="text" class="form-control" id="updatedOrderDriversLicense" v-model="updatedOrder.driverslicense" :placeholder="orderInModal.driverslicense">
-                </div>
-              </form>
-            </div>
+                <!-- Form for updating an order -->
+                <form>
+                    <div class="mb-3">
+                        <label for="updateOrderWorker" class="form-label">Worker:</label>
+                        <select class="form-select" id="updateOrderWorker" v-model="updatedOrder.worker">
+                            <option :value="orderInModal.worker">{{ orderInModal.worker }}</option>
+                            <option v-for="worker in workers" :key="worker.id" :value="worker.id">{{ worker.name }}</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="updateOrderClient" class="form-label">Client:</label>
+                        <select class="form-select" id="updateOrderClient" v-model="updatedOrder.client">
+                            <option :value="orderInModal.client">{{ orderInModal.client }}</option>
+                            <option v-for="client in clients" :key="client.id" :value="client.id">{{ client.name }}</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="updateOrderDuration" class="form-label">Duration:</label>
+                        <input type="text" class="form-control" id="updateOrderDuration" v-model="updatedOrder.duration" :placeholder="orderInModal.duration + ' hours'">
+                    </div>
+                    <div class="mb-3">
+                        <label for="updateOrderStatus" class="form-label">Status:</label>
+                        <input type="text" class="form-control" id="updateOrderStatus" v-model="updatedOrder.status" :placeholder="orderInModal.status">
+                    </div>
+                    <div class="mb-3">
+                        <label for="updateOrderInfo" class="form-label">Info:</label>
+                        <input type="text" class="form-control" id="updateOrderInfo" v-model="updatedOrder.info" :placeholder="orderInModal.info">
+                    </div>
+                </form>
+            </div>            
       
             <div class="modal-footer">
               <button type="button" class="btn btn-success" v-on:click="updateOrder" data-bs-dismiss="modal">Update</button>
