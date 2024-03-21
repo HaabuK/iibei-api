@@ -60,6 +60,34 @@ const vue = Vue.createApp({
       },
       workerToDelete: null,
 
+       // Orders
+       orderInModal: { 
+        name: null,
+        worker: null,
+        client: null,
+        duration: '',
+        status: '',
+        info: '',
+        },
+        orders: [],
+        newOrder: {
+            worker: '',
+            client: '',
+            duration: '',
+            status: '',
+            info: '',
+        },
+        workers: [],
+        clients: [],
+        updatedOrder: {
+            worker: '',
+            client: '',
+            duration: '',
+            status: '',
+            info: '',
+        },
+        orderToDelete: null,
+
     };
   },
   async created() {
@@ -934,10 +962,93 @@ const vue = Vue.createApp({
         console.error('Error deleting workersInProfession entry:', error);
         // Handle the error appropriately (e.g., show an error message)
       }
-    }  
+    },
+
+    //ORDERS
+    async fetchWorkerData() {
+      try {
+          const response = await fetch('http://localhost:7070/workers');
+          if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          this.workers = await response.json();
+          console.log('Workers:', this.workers);
+      } catch (error) {
+          console.error('Error fetching workers:', error.message);
+      }
   },
-  mounted() {
-    // Fetch professions data and assign it to the 'professions' property
-    this.fetchProfessions();
+  async fetchClientData() {
+      try {
+          const response = await fetch('http://localhost:7070/clients');
+          if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          this.clients = await response.json();
+          console.log('Clients:', this.clients);
+      } catch (error) {
+          console.error('Error fetching clients:', error.message);
+      }
   },
+  async fetchOrders() {
+      try {
+          const response = await fetch('http://localhost:7070/orders');
+          if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          this.orders = await response.json();
+      } catch (error) {
+          console.error('Error fetching orders:', error.message);
+      }
+  },
+  getWorkerName(workerId) {
+      const worker = this.workers.find(w => w.id === workerId);
+      return worker ? worker.name : 'Unknown';
+  },
+  getClientName(clientId) {
+      const client = this.clients.find(c => c.id === clientId);
+      return client ? client.name : 'Unknown';
+  },
+  async getOrder(id) {
+      try {
+          const orderResponse = await fetch(`http://localhost:7070/orders/${id}`);
+          const orderData = await orderResponse.json();
+          const workerId = orderData.workerId;
+          const clientId = orderData.clientId;
+
+          const workerResponse = await fetch(`http://localhost:7070/workers/${workerId}`);
+          const workerData = await workerResponse.json();
+
+          const clientResponse = await fetch(`http://localhost:7070/clients/${clientId}`);
+          const clientData = await clientResponse.json();
+
+          this.orderInModal = {
+              id: orderData.id,
+              name: orderData.name,
+              worker: workerData.name,
+              client: clientData.name,
+              duration: orderData.duration,
+              status: orderData.status,
+              info: orderData.info
+          };
+
+          this.showOrderModal();
+      } catch (error) {
+          console.error('Error fetching order data:', error);
+      }
+  },
+  showOrderModal() {
+      let orderInfoInModal = new bootstrap.Modal(document.getElementById('orderInfoInModal'), {});
+      orderInfoInModal.show();
+  },
+  closeOrderInfoModal() {
+      let orderInfoInModal = new bootstrap.Modal(document.getElementById('orderInfoInModal'), {});
+      orderInfoInModal.hide();
+  },
+  // Define other methods as needed
+},
+mounted() {
+  this.fetchWorkerData();
+  this.fetchClientData();
+  this.fetchOrders();
+},
 }).mount('#app');
