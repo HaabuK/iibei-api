@@ -802,6 +802,171 @@
         }
       }
     }
+  },
+
+
+
+  "/orders": {
+    "get": {
+      "tags": ["orders"],
+      "summary": "Get all orders",
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "content": {
+            "application/json": {
+              "example": {
+                "orders": [
+                  { "id": 1, "workerId": 1, "clientId": 1, "duration":10, "status": "working", "info":"Mida Juku ei tea, seda juhan ei ole õpetanud!" }
+                ]
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "No orders found"
+        }
+      }
+    },
+    "post": {
+      "tags": ["orders"],
+      "summary": "Create a new orders",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "example": {
+              "workerId": 1,
+              "clientId": 1,
+              "duration":10,
+              "status": "working",
+              "info":"Mida Juku ei tea, seda juhan ei ole õpetanud!"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Order created successfully",
+          "content": {
+            "application/json": {
+              "example": {
+                "id": 1,
+                "workerId": 1,
+                "clientId": 1
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request"
+        }
+      }
+    }
+  },
+  "/orders/{id}": {
+    "get": {
+      "tags": ["orders"],
+      "summary": "Get a orders by ID",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "content": {
+            "application/json": {
+              "example": {
+                "id": 1,
+                "workerId": 1,
+                "clientId": 1,
+                "duration":10,
+                "status": "working",
+                "info":"Mida Juku ei tea, seda juhan ei ole õpetanud!"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Order not found"
+        }
+      }
+    },
+    "put": {
+      "tags": ["orders"],
+      "summary": "Update a orders by ID",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "example": {
+                "workerId": 1,
+                "clientId": 1,
+                "duration":10,
+                "status": "working",
+                "info":"Mida Juku ei tea, seda juhan ei ole õpetanud!"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Order updated successfully",
+          "content": {
+            "application/json": {
+              "example": {
+                "id": 1,
+                "workerId": 1,
+                "clientId": 1,
+                "duration":10,
+                "status": "working",
+                "info":"Mida Juku ei tea, seda juhan ei ole õpetanud!"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Order not found"
+        }
+      }
+    },
+    "delete": {
+      "tags": ["orders"],
+      "summary": "Delete a orders by ID",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "responses": {
+        "204": {
+          "description": "Order deleted successfully"
+        },
+        "404": {
+          "description": "Order not found"
+        }
+      }
+    }
   }
         
   }
